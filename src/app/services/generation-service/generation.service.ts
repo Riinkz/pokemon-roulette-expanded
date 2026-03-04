@@ -7,7 +7,10 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class GenerationService {
 
+  private readonly STORAGE_KEY = 'pokemon-roulette-generation';
+
   constructor() {
+    this.loadState();
   }
 
   private generations: GenerationItem[] = [
@@ -29,6 +32,7 @@ export class GenerationService {
 
   setGeneration(index: number): void {
     this.generation.next(this.generations[index]);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(index));
   }
 
   getGeneration(): Observable<GenerationItem> {
@@ -37,5 +41,21 @@ export class GenerationService {
 
   getCurrentGeneration(): GenerationItem {
     return this.generation.getValue();
+  }
+
+  private loadState(): void {
+    const raw = localStorage.getItem(this.STORAGE_KEY);
+    if (raw !== null) {
+      try {
+        const index = JSON.parse(raw);
+        if (this.generations[index]) {
+          this.generation.next(this.generations[index]);
+        }
+      } catch (e) {}
+    }
+  }
+
+  clearSave(): void {
+    localStorage.removeItem(this.STORAGE_KEY);
   }
 }

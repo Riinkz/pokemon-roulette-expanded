@@ -16,11 +16,14 @@ import { GenerationService } from '../generation-service/generation.service';
 })
 export class TrainerService {
 
+  private readonly STORAGE_KEY = 'pokemon-roulette-save';
+
   constructor(private badgesService: BadgesService,
     private evolutionService: EvolutionService,
     private generationService: GenerationService,
     private itemSpriteService: ItemSpriteService,
     private pokemonService: PokemonService) {
+    this.loadState();
   }
 
   trainerSpriteData = trainerSpriteData;
@@ -62,6 +65,7 @@ export class TrainerService {
   setTrainer(generation: number, gender: string) {
     this.gender = gender;
     this.trainer.next({ sprite: this.getTrainerSprite(generation, gender) });
+    this.saveState();
   }
 
   addToTeam(pokemon: PokemonItem): void {
@@ -81,6 +85,7 @@ export class TrainerService {
 
     this.lastAddedPokemon = pokemon;
     this.trainerTeamObservable.next(this.getTeam());
+    this.saveState();
   }
 
   removeFromTeam(pokemon: PokemonItem): void {
@@ -96,6 +101,7 @@ export class TrainerService {
     }
 
     this.trainerTeamObservable.next(this.getTeam());
+    this.saveState();
   }
 
   getTeam(): PokemonItem[] {
@@ -125,6 +131,7 @@ export class TrainerService {
       }
     }
     this.trainerTeamObservable.next(this.getTeam());
+    this.saveState();
   }
 
   getPokemonThatCanEvolve(): PokemonItem[] {
@@ -159,6 +166,7 @@ export class TrainerService {
     }
 
     this.trainerTeamObservable.next(this.getTeam());
+    this.saveState();
   }
 
   performTrade(pokemonOut: PokemonItem, pokemonIn: PokemonItem): void {
@@ -178,6 +186,7 @@ export class TrainerService {
       }
     }
     this.trainerTeamObservable.next(this.getTeam());
+    this.saveState();
   }
 
   getItems(): ItemItem[] {
@@ -207,6 +216,7 @@ export class TrainerService {
     }
     this.trainerItems.push(item);
     this.trainerItemsObservable.next(this.trainerItems);
+    this.saveState();
   }
 
   removeItem(item: ItemItem): void {
@@ -215,6 +225,7 @@ export class TrainerService {
       this.trainerItems.splice(index, 1);
     }
     this.trainerItemsObservable.next(this.trainerItems);
+    this.saveState();
   }
 
   getBadgesObservable(): Observable<Badge[]> {
@@ -225,11 +236,13 @@ export class TrainerService {
     this.badgesService.getBadge(this.generationService.getCurrentGeneration(), fromRound, fromLeader).subscribe(badge => {
       this.trainerBadges.push(badge);
       this.trainerBadgesObservable.next(this.trainerBadges);
+      this.saveState();
     })
   }
 
   resetTrainer() {
     this.trainer.next({ sprite: './place-holder-pixel.png' });
+    this.clearSave();
   }
 
   resetTeam() {
@@ -255,6 +268,51 @@ export class TrainerService {
   resetBadges() {
     this.trainerBadges = [];
     this.trainerBadgesObservable.next(this.trainerBadges);
+  }
+
+  saveState(): void {
+    const state = {
+      gender: this.gender,
+      trainerSprite: this.trainer.getValue().sprite,
+      trainerTeam: this.trainerTeam,
+      storedPokemon: this.storedPokemon,
+      trainerItems: this.trainerItems,
+      trainerBadges: this.trainerBadges
+    };
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error('Failed to save trainer state:', e);
+    }
+  }
+
+  private loadState(): void {
+    const raw = localStorage.getItem(this.STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const state = JSON.parse(raw);
+      if (state.gender) this.gender = state.gender;
+      if (state.trainerSprite) this.trainer.next({ sprite: state.trainerSprite });
+      if (state.trainerTeam?.length) {
+        this.trainerTeam = state.trainerTeam;
+        this.trainerTeamObservable.next(this.trainerTeam);
+      }
+      if (state.storedPokemon?.length) this.storedPokemon = state.storedPokemon;
+      if (state.trainerItems?.length) {
+        this.trainerItems = state.trainerItems;
+        this.trainerItemsObservable.next(this.trainerItems);
+      }
+      if (state.trainerBadges?.length) {
+        this.trainerBadges = state.trainerBadges;
+        this.trainerBadgesObservable.next(this.trainerBadges);
+      }
+    } catch (e) {
+      console.error('Failed to load trainer state:', e);
+    }
+  }
+
+  clearSave(): void {
+    localStorage.removeItem(this.STORAGE_KEY);
   }
 }
 

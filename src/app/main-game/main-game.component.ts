@@ -16,6 +16,7 @@ import { LanguageSelectorComponent } from './language-selector/language-selector
 import { RouletteContainerComponent } from './roulette-container/roulette-container.component';
 import { SettingsButtonComponent } from '../settings-button/settings-button.component';
 import { RareCandyService } from '../services/rare-candy-service/rare-candy.service';
+import { GenerationService } from '../services/generation-service/generation.service';
 
 @Component({
   selector: 'app-main-game',
@@ -39,6 +40,7 @@ export class MainGameComponent implements OnInit {
   constructor(
     private darkModeService: DarkModeService,
     private gameStateService: GameStateService,
+    private generationService: GenerationService,
     private trainerService: TrainerService,
     private modalService: NgbModal,
     private analyticsService: AnalyticsService,
@@ -78,5 +80,6 @@ export class MainGameComponent implements OnInit {
     this.trainerService.resetItems();
     this.trainerService.resetBadges();
     this.gameStateService.resetGameState();
+    this.generationService.clearSave();
   }
 }
