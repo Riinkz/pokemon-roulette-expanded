@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { AudioService } from '../../services/audio-service/audio.service';
 import { SettingsService } from '../../services/settings-service/settings.service';
 import { RareCandyService } from '../../services/rare-candy-service/rare-candy.service';
+import { StatsService } from '../../services/stats-service/stats';
 import { Subscription } from 'rxjs';
 import { CharacterSelectComponent } from "./roulettes/character-select/character-select.component";
 import { StarterRouletteComponent } from "./roulettes/starter-roulette/starter-roulette.component";
@@ -96,7 +97,8 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
       private modalService: NgbModal,
       private audioService: AudioService,
       private settingsService: SettingsService,
-      private rareCandyService: RareCandyService) {
+      private rareCandyService: RareCandyService,
+      private statsService: StatsService) {
       this.itemFoundAudio = this.audioService.createAudio('./ItemFound.mp3');
     }
 
@@ -383,6 +385,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   gymBattleResult(result: boolean): void {
     this.runningShoesUsed = false;
     this.respinReason = '';
+    this.recordBattleStats(result);
 
     if (result) {
       this.playItemFoundAudio();
@@ -463,6 +466,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   }
 
   rivalBattleResult(result: boolean): void {
+    this.recordBattleStats(result);
     if (result) {
       this.chooseWhoWillEvolve('battle-rival');
     } else {
@@ -584,6 +588,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   eliteFourBattleResult(result: boolean): void {
     this.runningShoesUsed = false;
     this.respinReason = '';
+    this.recordBattleStats(result);
 
     if (result) {
       this.gameStateService.advanceRound();
@@ -597,6 +602,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   championBattleResult(result: boolean): void {
     this.runningShoesUsed = false;
     this.respinReason = '';
+    this.recordBattleStats(result);
 
     if (result) {
       this.gameStateService.advanceRound();
@@ -691,6 +697,12 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     } else {
       this.finishCurrentState();
     }
+  }
+
+  private recordBattleStats(won: boolean): void {
+    this.trainerService.getTeam().forEach(pokemon => {
+      this.statsService.recordBattle(pokemon.pokemonId, pokemon.text, won);
+    });
   }
 
   private useEscapeRope(): void {

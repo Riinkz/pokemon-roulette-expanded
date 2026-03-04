@@ -1,0 +1,42 @@
+<div class="row">
+    <div class="col-12 col-sm-2">
+        <div class="row py-4">
+            <div class="col-6 col-sm-12 mb-2">
+                <app-main-game-button></app-main-game-button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-9">
+        <div class="container text-center">
+            <div class="mt-2 mb-4">
+                <h3>Battle Stats</h3>
+            </div>
+            @if (statsList.length === 0) {
+                <p>No battles recorded yet. Play some battles first!</p>
+            } @else {
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Pokemon</th>
+                                <th>Wins</th>
+                                <th>Losses</th>
+                                <th>Winrate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (entry of statsList; track entry.pokemonId) {
+                                <tr>
+                                    <td>{{ entry.name }}</td>
+                                    <td>{{ entry.wins }}</td>
+                                    <td>{{ entry.losses }}</td>
+                                    <td>{{ entry.winrate }}%</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -6,6 +6,7 @@ import { DarkModeToggleComponent } from './dark-mode-toggle/dark-mode-toggle.com
 import { NgIconsModule } from '@ng-icons/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import { SettingsService, GameSettings } from '../services/settings-service/settings.service';
 
 @Component({
@@ -26,7 +27,7 @@ export class SettingsComponent implements OnInit {
   settings$!: Observable<GameSettings>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(private settingsService: SettingsService, private router: Router) {}
 
   ngOnInit(): void {
     this.settings$ = this.settingsService.settings$;
@@ -42,6 +43,10 @@ export class SettingsComponent implements OnInit {
 
   onToggleSkipShinyRolls(): void {
     this.settingsService.toggleSkipShinyRolls();
+  }
+
+  goToStats(): void {
+    this.router.navigate(['/stats']);
   }
 
   exportSave(): void {
