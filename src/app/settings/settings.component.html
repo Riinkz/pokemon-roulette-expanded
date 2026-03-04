@@ -60,6 +60,15 @@
                     <div class="col-12">
                         <app-language-selector></app-language-selector>
                     </div>
+                    <div class="col-12 mt-3">
+                        <hr>
+                        <h5>Save Data</h5>
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button class="btn btn-outline-primary btn-sm" (click)="exportSave()">Export Save</button>
+                            <button class="btn btn-outline-secondary btn-sm" (click)="importSave()">Import Save</button>
+                        </div>
+                        <input type="file" #fileInput accept=".txt" style="display:none" (change)="onFileSelected($event)">
+                    </div>
                 </div>
             </div>
         </div>

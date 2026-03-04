@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { LanguageSelectorComponent } from "../main-game/language-selector/language-selector.component";
 import { TranslatePipe } from '@ngx-translate/core';
 import { MainGameButtonComponent } from "../main-game-button/main-game-button.component";
@@ -24,7 +24,8 @@ import { SettingsService, GameSettings } from '../services/settings-service/sett
 export class SettingsComponent implements OnInit {
 
   settings$!: Observable<GameSettings>;
-    
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   constructor(private settingsService: SettingsService) {}
 
   ngOnInit(): void {
@@ -41,6 +42,49 @@ export class SettingsComponent implements OnInit {
 
   onToggleSkipShinyRolls(): void {
     this.settingsService.toggleSkipShinyRolls();
+  }
+
+  exportSave(): void {
+    const saveData: Record<string, string> = {};
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('pokemon-roulette')) {
+        saveData[key] = localStorage.getItem(key)!;
+      }
+    }
+    const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'pokemon-roulette-save.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  importSave(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const saveData = JSON.parse(reader.result as string);
+        for (const [key, value] of Object.entries(saveData)) {
+          if (key.startsWith('pokemon-roulette')) {
+            localStorage.setItem(key, value as string);
+          }
+        }
+        window.location.reload();
+      } catch (e) {
+        console.error('Invalid save file:', e);
+        alert('Invalid save file.');
+      }
+    };
+    reader.readAsText(file);
   }
 
 }
