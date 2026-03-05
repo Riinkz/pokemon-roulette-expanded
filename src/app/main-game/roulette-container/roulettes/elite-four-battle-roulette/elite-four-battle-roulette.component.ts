@@ -46,7 +46,7 @@ export class EliteFourBattleRouletteComponent implements OnInit, OnDestroy {
   trainerTeam!: PokemonItem[];
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
-  @Output() battleResultEvent = new EventEmitter<boolean>();
+  @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromEliteChange = new EventEmitter<number>();
 
   victoryOdds: WheelItem[] = [
@@ -97,14 +97,14 @@ export class EliteFourBattleRouletteComponent implements OnInit, OnDestroy {
   onItemSelected(index: number): void {
     this.retries--;
     if (this.victoryOdds[index].text === 'game.main.roulette.elite.yes') {
-      this.battleResultEvent.emit(true);
+      this.battleResultEvent.emit({result: true, name: this.currentElite.name});
     } else {
       if (this.retries <= 0) {
         const potion = this.hasPotions();
         if (potion) {
           this.usePotion(potion);
         } else {
-          this.battleResultEvent.emit(false);
+          this.battleResultEvent.emit({result: false, name: this.currentElite.name});
         }
       }
     }

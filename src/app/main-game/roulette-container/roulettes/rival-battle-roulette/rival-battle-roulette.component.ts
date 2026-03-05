@@ -48,7 +48,7 @@ export class RivalBattleRouletteComponent implements OnInit, OnDestroy {
   trainerTeam!: PokemonItem[];
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
-  @Output() battleResultEvent = new EventEmitter<boolean>();
+  @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromRivalChange = new EventEmitter<number>();
 
 
@@ -99,9 +99,9 @@ export class RivalBattleRouletteComponent implements OnInit, OnDestroy {
 
   onItemSelected(index: number): void {
     if (this.victoryOdds[index].text === 'game.main.roulette.rival.yes') {
-      this.battleResultEvent.emit(true);
+      this.battleResultEvent.emit({result: true, name: this.currentRival.name});
     } else {
-      this.battleResultEvent.emit(false);
+      this.battleResultEvent.emit({result: false, name: this.currentRival.name});
     }
   }
 

@@ -47,7 +47,7 @@ export class GymBattleRouletteComponent implements OnInit, OnDestroy {
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
   @Input() fromLeader!: number;
-  @Output() battleResultEvent = new EventEmitter<boolean>();
+  @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromLeaderChange = new EventEmitter<number>();
 
   victoryOdds: WheelItem[] = [
@@ -98,14 +98,14 @@ export class GymBattleRouletteComponent implements OnInit, OnDestroy {
   onItemSelected(index: number): void {
     this.retries--;
     if (this.victoryOdds[index].text === 'game.main.roulette.gym.yes') {
-      this.battleResultEvent.emit(true);
+      this.battleResultEvent.emit({result: true, name: this.currentLeader.name});
     } else {
       if (this.retries <= 0) {
         const potion = this.hasPotions();
         if (potion) {
           this.usePotion(potion);
         } else {
-          this.battleResultEvent.emit(false);
+          this.battleResultEvent.emit({result: false, name: this.currentLeader.name});
         }
       }
     }
