@@ -27,10 +27,26 @@ export class SettingsComponent implements OnInit {
   settings$!: Observable<GameSettings>;
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  devMode = false;
+  private gearClicks = 0;
+  private gearClickTimer: any;
+
   constructor(private settingsService: SettingsService, private router: Router) {}
 
   ngOnInit(): void {
     this.settings$ = this.settingsService.settings$;
+    this.devMode = this.settingsService.currentSettings.devMode;
+  }
+
+  onHeaderClick(): void {
+    this.gearClicks++;
+    clearTimeout(this.gearClickTimer);
+    this.gearClickTimer = setTimeout(() => this.gearClicks = 0, 2000);
+    if (this.gearClicks >= 5) {
+      this.gearClicks = 0;
+      this.settingsService.toggleDevMode();
+      this.devMode = this.settingsService.currentSettings.devMode;
+    }
   }
 
   onToggleVerbosity(): void {

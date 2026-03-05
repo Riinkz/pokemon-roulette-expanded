@@ -17,6 +17,7 @@ import { RouletteContainerComponent } from './roulette-container/roulette-contai
 import { SettingsButtonComponent } from '../settings-button/settings-button.component';
 import { RareCandyService } from '../services/rare-candy-service/rare-candy.service';
 import { GenerationService } from '../services/generation-service/generation.service';
+import { SettingsService } from '../services/settings-service/settings.service';
 
 @Component({
   selector: 'app-main-game',
@@ -44,11 +45,14 @@ export class MainGameComponent implements OnInit {
     private trainerService: TrainerService,
     private modalService: NgbModal,
     private analyticsService: AnalyticsService,
-    private rareCandyService: RareCandyService) {
+    private rareCandyService: RareCandyService,
+    private settingsService: SettingsService) {
       this.darkMode = this.darkModeService.darkMode$;
   }
 
   wheelSpinning: boolean = false;
+  devMode = false;
+  devMenuOpen = false;
 
   ngOnInit(): void {
     this.analyticsService.trackEvent('main-game-loaded', 'Main Game Loaded', 'user acess');
@@ -56,6 +60,20 @@ export class MainGameComponent implements OnInit {
     this.gameStateService.wheelSpinningObserver.subscribe(state => {
       this.wheelSpinning = state;
     });
+
+    this.settingsService.settings$.subscribe(s => this.devMode = s.devMode);
+  }
+
+  toggleDevMenu(): void {
+    this.devMenuOpen = !this.devMenuOpen;
+  }
+
+  toggleFastSpins(): void {
+    this.settingsService.toggleFastSpins();
+  }
+
+  get settings() {
+    return this.settingsService.currentSettings;
   }
   
   darkMode!: Observable<boolean>;

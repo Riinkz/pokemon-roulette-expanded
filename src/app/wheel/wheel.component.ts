@@ -7,6 +7,7 @@ import { GameStateService } from '../services/game-state-service/game-state.serv
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AudioService } from '../services/audio-service/audio.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { SettingsService } from '../services/settings-service/settings.service';
 
 @Component({
   selector: 'app-wheel',
@@ -50,7 +51,8 @@ export class WheelComponent implements AfterViewInit, OnChanges {
     private gameStateService: GameStateService,
     private translateService: TranslateService,
     private audioService: AudioService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private settingsService: SettingsService
   ) {
     this.clickAudio = this.audioService.createAudio('./click.mp3');
     this.darkMode = this.darkModeService.darkMode$;
@@ -157,6 +159,9 @@ export class WheelComponent implements AfterViewInit, OnChanges {
     this.spinning = true;
     this.gameStateService.setWheelSpinning(this.spinning);
 
+    this.duration = this.settingsService.currentSettings.fastSpins
+      ? 200
+      : Math.floor(Math.random() * (5000 - 3000)) + 3000;
 
     this.startTime = performance.now();
     const totalWeight = this.getTotalWeights();
