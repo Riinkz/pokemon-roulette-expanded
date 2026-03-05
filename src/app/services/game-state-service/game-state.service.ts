@@ -92,11 +92,14 @@ export class GameStateService {
   }
 
   resetGameState(): void {
-    this.initializeStates();
-    this.setNextState('game-start');
-    this.finishCurrentState();
-    this.currentRound.next(0);
     this.clearSave();
+    this.initializeStates();
+    this.stateStack.push('game-start');
+    const poppedState = this.stateStack.pop();
+    if (poppedState) {
+      this.state.next(poppedState);
+    }
+    this.currentRound.next(0);
   }
 
   private saveState(): void {

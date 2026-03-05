@@ -75,6 +75,7 @@ export class TrainerService {
     if (!pokemon.sprite) {
       this.pokemonService.getPokemonSprites(pokemon.pokemonId).subscribe(response => {
         pokemon.sprite = response.sprite;
+        this.saveState();
       });
     }
     if(this.trainerTeam.length < 6) {
@@ -151,6 +152,7 @@ export class TrainerService {
     if (!pokemonIn.sprite) {
       this.pokemonService.getPokemonSprites(pokemonIn.pokemonId).subscribe(response => {
         pokemonIn.sprite = response.sprite;
+        this.saveState();
       });
     }
 
@@ -173,6 +175,7 @@ export class TrainerService {
     if (!pokemonIn.sprite) {
       this.pokemonService.getPokemonSprites(pokemonIn.pokemonId).subscribe(response => {
         pokemonIn.sprite = response.sprite;
+        this.saveState();
       });
     }
 
@@ -212,6 +215,7 @@ export class TrainerService {
     if (!item.sprite) {
       this.itemSpriteService.getItemSprite(item.name).subscribe(response => {
         item.sprite = response.sprite;
+        this.saveState();
       });
     }
     this.trainerItems.push(item);
@@ -249,6 +253,7 @@ export class TrainerService {
     this.trainerTeam = [];
     this.storedPokemon = [];
     this.trainerTeamObservable.next(this.trainerTeam);
+    this.saveState();
   }
 
   resetItems() {
@@ -263,11 +268,13 @@ export class TrainerService {
       }
     ];
     this.trainerItemsObservable.next(this.trainerItems);
+    this.saveState();
   }
 
   resetBadges() {
     this.trainerBadges = [];
     this.trainerBadgesObservable.next(this.trainerBadges);
+    this.saveState();
   }
 
   saveState(): void {
@@ -306,6 +313,27 @@ export class TrainerService {
         this.trainerBadges = state.trainerBadges;
         this.trainerBadgesObservable.next(this.trainerBadges);
       }
+
+      // re-fetch missing sprites (race condition: F5 before async fetch completed)
+      [...this.trainerTeam, ...this.storedPokemon].forEach(pokemon => {
+        if (!pokemon.sprite) {
+          this.pokemonService.getPokemonSprites(pokemon.pokemonId).subscribe(response => {
+            pokemon.sprite = response.sprite;
+            this.trainerTeamObservable.next(this.trainerTeam);
+            this.saveState();
+          });
+        }
+      });
+
+      this.trainerItems.forEach(item => {
+        if (!item.sprite) {
+          this.itemSpriteService.getItemSprite(item.name).subscribe(response => {
+            item.sprite = response.sprite;
+            this.saveState();
+          });
+        }
+      });
+
     } catch (e) {
       console.error('Failed to load trainer state:', e);
     }
