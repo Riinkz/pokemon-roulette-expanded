@@ -12,6 +12,7 @@ import { StatsService, HallOfFameEntry } from '../services/stats-service/stats';
 })
 export class Stats implements OnInit {
 
+  activeTab: 'battles' | 'hallOfFame' = 'battles';
   leadersList: { name: string; wins: number; losses: number; winrate: number; type: string }[] = [];
   hallOfFame: HallOfFameEntry[] = [];
 

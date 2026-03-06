@@ -9,70 +9,79 @@
     <div class="col-12 col-sm-9">
         <div class="container text-center">
 
-            <div class="mt-2 mb-4">
-                <h3>Battle Stats</h3>
+            <div class="mt-2 mb-3">
+                <ul class="nav nav-tabs justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeTab === 'battles'"
+                           (click)="activeTab = 'battles'" style="cursor: pointer">Battle Stats</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeTab === 'hallOfFame'"
+                           (click)="activeTab = 'hallOfFame'" style="cursor: pointer">Hall of Fame</a>
+                    </li>
+                </ul>
             </div>
 
-            @if (leadersList.length === 0) {
-                <p>No battles recorded yet.</p>
-            } @else {
-                <div class="table-responsive">
-                    <table class="table table-sm table-striped">
-                        <thead>
-                            <tr>
-                                <th>Leader</th>
-                                <th>Type</th>
-                                <th>Wins</th>
-                                <th>Losses</th>
-                                <th>Winrate</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (entry of leadersList; track entry.name) {
+            @if (activeTab === 'battles') {
+                @if (leadersList.length === 0) {
+                    <p>No battles recorded yet.</p>
+                } @else {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
                                 <tr>
-                                    <td>{{ entry.name | translate }}</td>
-                                    <td>
-                                        <span class="badge"
-                                            [class.bg-primary]="entry.type === 'gym'"
-                                            [class.bg-warning]="entry.type === 'elite'"
-                                            [class.bg-danger]="entry.type === 'champion'"
-                                            [class.bg-secondary]="entry.type === 'rival'">
-                                            {{ entry.type }}
-                                        </span>
-                                    </td>
-                                    <td>{{ entry.wins }}</td>
-                                    <td>{{ entry.losses }}</td>
-                                    <td>{{ entry.winrate }}%</td>
+                                    <th>Leader</th>
+                                    <th>Type</th>
+                                    <th>Wins</th>
+                                    <th>Losses</th>
+                                    <th>Winrate</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody>
+                                @for (entry of leadersList; track entry.name) {
+                                    <tr>
+                                        <td>{{ entry.name | translate }}</td>
+                                        <td>
+                                            <span class="badge"
+                                                [class.bg-primary]="entry.type === 'gym'"
+                                                [class.bg-warning]="entry.type === 'elite'"
+                                                [class.bg-danger]="entry.type === 'champion'"
+                                                [class.bg-secondary]="entry.type === 'rival'">
+                                                {{ entry.type }}
+                                            </span>
+                                        </td>
+                                        <td>{{ entry.wins }}</td>
+                                        <td>{{ entry.losses }}</td>
+                                        <td>{{ entry.winrate }}%</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             }
 
-            <div class="mt-4 mb-4">
-                <h3>Hall of Fame</h3>
-            </div>
-
-            @if (hallOfFame.length === 0) {
-                <p>No completed runs yet. Beat the Champion!</p>
-            } @else {
-                @for (run of hallOfFame; track $index) {
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ run.generation }} - {{ run.date }}</h5>
-                            <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                @for (pokemon of run.team; track pokemon.pokemonId) {
-                                    <div class="text-center">
-                                        <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemon.shiny ? 'shiny/' : '') + pokemon.pokemonId + '.png'"
-                                             width="48" height="48"
-                                             [title]="pokemon.name | translate">
-                                        <div class="small">{{ pokemon.name | translate }}</div>
-                                    </div>
-                                }
+            @if (activeTab === 'hallOfFame') {
+                @if (hallOfFame.length === 0) {
+                    <p>No completed runs yet. Beat the Champion!</p>
+                } @else {
+                    @for (run of hallOfFame; track $index) {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ run.generation }} - {{ run.date }}</h5>
+                                <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                    @for (pokemon of run.team; track pokemon.pokemonId) {
+                                        <div class="text-center">
+                                            <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemon.shiny ? 'shiny/' : '') + pokemon.pokemonId + '.png'"
+                                                 width="48" height="48"
+                                                 [title]="pokemon.name | translate">
+                                            <div class="small">{{ pokemon.name | translate }}</div>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
             }
 
