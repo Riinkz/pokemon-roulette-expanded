@@ -57,7 +57,9 @@ export class ItemsComponent implements OnInit, OnDestroy {
 
   getItemText(index: number): string {
     if (this.trainerItems[index]) {
-      return this.translateService.instant(this.trainerItems[index].text);
+      const name = this.translateService.instant(this.trainerItems[index].text);
+      const desc = this.translateService.instant(this.trainerItems[index].description);
+      return name + ' - ' + desc;
     }
     return 'Empty';
   }

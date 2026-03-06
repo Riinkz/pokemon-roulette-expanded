@@ -61,6 +61,11 @@ export class SettingsComponent implements OnInit {
     this.settingsService.toggleSkipShinyRolls();
   }
 
+  onVolumeChange(event: Event): void {
+    const value = +(event.target as HTMLInputElement).value;
+    this.settingsService.setAudioVolume(value);
+  }
+
   goToStats(): void {
     this.router.navigate(['/stats']);
   }

@@ -235,6 +235,20 @@ export class WheelComponent implements AfterViewInit, OnChanges {
     return this.translatedItems.reduce((sum, item) => sum + item.weight, 0);
   }
 
+  get winChance(): number | null {
+    if (!this.items.length) return null;
+    const colors = new Set(this.items.map(i => i.fillStyle));
+    if (!colors.has('green') || !colors.has('crimson') || colors.size !== 2) return null;
+    const greenWeight = this.items.filter(i => i.fillStyle === 'green').reduce((s, i) => s + i.weight, 0);
+    const totalWeight = this.items.reduce((s, i) => s + i.weight, 0);
+    return Math.round(greenWeight / totalWeight * 100);
+  }
+
+  get showChances(): boolean {
+    const s = this.settingsService.currentSettings;
+    return s.devMode && s.showChances;
+  }
+
   getRandomWeightedIndex(): number {
     const totalWeight = this.getTotalWeights();
     let random = Math.random() * totalWeight;

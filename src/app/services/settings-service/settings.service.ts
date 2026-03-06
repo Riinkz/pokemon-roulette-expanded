@@ -7,6 +7,11 @@ export interface GameSettings {
   lessExplanations: boolean;
   devMode: boolean;
   fastSpins: boolean;
+  showChances: boolean;
+  showEventLog: boolean;
+  showPower: boolean;
+  showSort: boolean;
+  audioVolume: number;
 }
 
 @Injectable({
@@ -20,7 +25,12 @@ export class SettingsService {
     skipShinyRolls: false,
     lessExplanations: false,
     devMode: false,
-    fastSpins: false
+    fastSpins: false,
+    showChances: false,
+    showEventLog: false,
+    showPower: false,
+    showSort: false,
+    audioVolume: 100
   };
 
   private settingsSubject$: BehaviorSubject<GameSettings>;
@@ -64,6 +74,36 @@ export class SettingsService {
   toggleFastSpins(): void {
     const currentSettings = this.currentSettings;
     const newSettings = { ...currentSettings, fastSpins: !currentSettings.fastSpins };
+    this.updateSettings(newSettings);
+  }
+
+  toggleShowChances(): void {
+    const currentSettings = this.currentSettings;
+    const newSettings = { ...currentSettings, showChances: !currentSettings.showChances };
+    this.updateSettings(newSettings);
+  }
+
+  toggleShowEventLog(): void {
+    const currentSettings = this.currentSettings;
+    const newSettings = { ...currentSettings, showEventLog: !currentSettings.showEventLog };
+    this.updateSettings(newSettings);
+  }
+
+  toggleShowPower(): void {
+    const currentSettings = this.currentSettings;
+    const newSettings = { ...currentSettings, showPower: !currentSettings.showPower };
+    this.updateSettings(newSettings);
+  }
+
+  toggleShowSort(): void {
+    const currentSettings = this.currentSettings;
+    const newSettings = { ...currentSettings, showSort: !currentSettings.showSort };
+    this.updateSettings(newSettings);
+  }
+
+  setAudioVolume(volume: number): void {
+    const currentSettings = this.currentSettings;
+    const newSettings = { ...currentSettings, audioVolume: volume, muteAudio: volume === 0 };
     this.updateSettings(newSettings);
   }
 

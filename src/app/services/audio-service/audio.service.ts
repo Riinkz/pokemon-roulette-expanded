@@ -15,11 +15,8 @@ export class AudioService {
    * @param volume - Volume level (0.0 to 1.0), will be set to 0 if muted
    */
   playAudio(audio: HTMLAudioElement, volume: number = 1.0): void {
-    // Check if audio is muted
-    const isMuted = this.settingsService.currentSettings.muteAudio;
-    
-    // Set volume to 0 if muted, otherwise use the provided volume
-    audio.volume = isMuted ? 0 : volume;
+    const settings = this.settingsService.currentSettings;
+    audio.volume = settings.muteAudio ? 0 : volume * (settings.audioVolume / 100);
     
     // Play the audio
     if (audio.paused) {

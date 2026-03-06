@@ -244,6 +244,17 @@ export class TrainerService {
     })
   }
 
+  sortTeam(mode: 'power' | 'newest'): void {
+    if (mode === 'power') {
+      this.trainerTeam.sort((a, b) => b.power - a.power);
+    } else {
+      // newest = reverse to put latest additions first
+      this.trainerTeam.reverse();
+    }
+    this.trainerTeamObservable.next(this.trainerTeam);
+    this.saveState();
+  }
+
   resetTrainer() {
     this.trainer.next({ sprite: './place-holder-pixel.png' });
     this.clearSave();

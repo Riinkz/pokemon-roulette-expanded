@@ -21,10 +21,30 @@
                     </button>
                     @if (devMenuOpen) {
                     <div class="dev-menu">
-                        <div class="form-check form-switch">
+                        <div class="form-check form-switch mb-1">
                             <input class="form-check-input" type="checkbox" id="fastSpins"
                                 [checked]="settings.fastSpins" (change)="toggleFastSpins()">
                             <label class="form-check-label" for="fastSpins">Fast Spins</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" id="showChances"
+                                [checked]="settings.showChances" (change)="toggleShowChances()">
+                            <label class="form-check-label" for="showChances">Show Chances</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" id="showEventLog"
+                                [checked]="settings.showEventLog" (change)="toggleShowEventLog()">
+                            <label class="form-check-label" for="showEventLog">Event Log</label>
+                        </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" id="showPower"
+                                [checked]="settings.showPower" (change)="toggleShowPower()">
+                            <label class="form-check-label" for="showPower">Show Power</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="showSort"
+                                [checked]="settings.showSort" (change)="toggleShowSort()">
+                            <label class="form-check-label" for="showSort">Sort Party</label>
                         </div>
                     </div>
                     }
@@ -41,9 +61,19 @@
                 </button> -->
         </div>
         <div class="main-game col-12 col-sm-5">
-            <app-roulette-container 
+            <app-roulette-container
                 (resetGameEvent)="resetGame()">
             </app-roulette-container>
+            @if (devMode && settings.showEventLog) {
+            <div class="event-log">
+                <small class="text-warning fw-bold">Event Log</small>
+                <div class="event-log-box">
+                    @for (event of (eventLogService.events$ | async); track $index) {
+                    <div class="event-log-entry">{{ event }}</div>
+                    }
+                </div>
+            </div>
+            }
         </div>
 
         <div class="trainer-info col-12 col-sm-4">

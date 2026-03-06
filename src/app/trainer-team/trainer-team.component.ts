@@ -7,6 +7,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { BadgesComponent } from "./badges/badges.component";
 import { Badge } from '../interfaces/badge';
 import { TrainerService } from '../services/trainer-service/trainer.service';
+import { SettingsService } from '../services/settings-service/settings.service';
 import { StoragePcComponent } from "./storage-pc/storage-pc.component";
 import {TranslatePipe} from '@ngx-translate/core';
 
@@ -22,7 +23,8 @@ import {TranslatePipe} from '@ngx-translate/core';
 export class TrainerTeamComponent implements OnInit, OnDestroy {
 
   constructor(private trainerService: TrainerService,
-              private darkModeService: DarkModeService) { }
+              private darkModeService: DarkModeService,
+              private settingsService: SettingsService) { }
 
   trainer!: { sprite: string; };
   trainerTeam!: PokemonItem[];
@@ -51,6 +53,28 @@ export class TrainerTeamComponent implements OnInit, OnDestroy {
     this.trainerSubscription?.unsubscribe();
     this.teamSubscription?.unsubscribe();
     this.badgesSubscription?.unsubscribe();
+  }
+
+  get teamPower(): number {
+    return this.trainerTeam?.reduce((sum, p) => sum + (p.power || 0), 0) || 0;
+  }
+
+  get showPower(): boolean {
+    const s = this.settingsService.currentSettings;
+    return s.devMode && s.showPower;
+  }
+
+  get showSort(): boolean {
+    const s = this.settingsService.currentSettings;
+    return s.devMode && s.showSort;
+  }
+
+  sortByPower(): void {
+    this.trainerService.sortTeam('power');
+  }
+
+  sortByNewest(): void {
+    this.trainerService.sortTeam('newest');
   }
 
   getSprite(pokemon: PokemonItem): string {

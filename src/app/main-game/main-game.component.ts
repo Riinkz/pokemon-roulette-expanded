@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { NgbCollapseModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TrainerTeamComponent } from "../trainer-team/trainer-team.component";
 import { ItemsComponent } from "../items/items.component";
@@ -18,6 +18,7 @@ import { SettingsButtonComponent } from '../settings-button/settings-button.comp
 import { RareCandyService } from '../services/rare-candy-service/rare-candy.service';
 import { GenerationService } from '../services/generation-service/generation.service';
 import { SettingsService } from '../services/settings-service/settings.service';
+import { EventLogService } from '../services/event-log-service/event-log.service';
 
 @Component({
   selector: 'app-main-game',
@@ -46,7 +47,8 @@ export class MainGameComponent implements OnInit {
     private modalService: NgbModal,
     private analyticsService: AnalyticsService,
     private rareCandyService: RareCandyService,
-    private settingsService: SettingsService) {
+    private settingsService: SettingsService,
+    public eventLogService: EventLogService) {
       this.darkMode = this.darkModeService.darkMode$;
   }
 
@@ -72,6 +74,22 @@ export class MainGameComponent implements OnInit {
     this.settingsService.toggleFastSpins();
   }
 
+  toggleShowChances(): void {
+    this.settingsService.toggleShowChances();
+  }
+
+  toggleShowEventLog(): void {
+    this.settingsService.toggleShowEventLog();
+  }
+
+  toggleShowPower(): void {
+    this.settingsService.toggleShowPower();
+  }
+
+  toggleShowSort(): void {
+    this.settingsService.toggleShowSort();
+  }
+
   get settings() {
     return this.settingsService.currentSettings;
   }
@@ -90,6 +108,20 @@ export class MainGameComponent implements OnInit {
     }
 
     this.rareCandyService.triggerRareCandyEvolution(rareCandy);
+  }
+
+  private lastRPress = 0;
+
+  @HostListener('window:keydown.r')
+  handleRestartShortcut(): void {
+    if (!this.devMode || this.wheelSpinning) return;
+    const now = Date.now();
+    if (now - this.lastRPress < 500) {
+      this.resetGameAction();
+      this.lastRPress = 0;
+    } else {
+      this.lastRPress = now;
+    }
   }
 
   resetGame(): void {

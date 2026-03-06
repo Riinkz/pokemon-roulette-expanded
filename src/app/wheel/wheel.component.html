@@ -16,5 +16,8 @@
             (click)="spinWheel()">
             {{ 'wheel.spin' | translate }}
     </button>
+    @if (showChances && winChance !== null) {
+    <p class="text-warning mb-0"><small>Win: {{ winChance }}%</small></p>
+    }
 </div>
 

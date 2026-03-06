@@ -15,6 +15,7 @@ import { SettingsService } from '../../services/settings-service/settings.servic
 import { RareCandyService } from '../../services/rare-candy-service/rare-candy.service';
 import { StatsService } from '../../services/stats-service/stats';
 import { GenerationService } from '../../services/generation-service/generation.service';
+import { EventLogService } from '../../services/event-log-service/event-log.service';
 import { Subscription } from 'rxjs';
 import { CharacterSelectComponent } from "./roulettes/character-select/character-select.component";
 import { StarterRouletteComponent } from "./roulettes/starter-roulette/starter-roulette.component";
@@ -100,7 +101,8 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
       private settingsService: SettingsService,
       private rareCandyService: RareCandyService,
       private statsService: StatsService,
-      private generationService: GenerationService) {
+      private generationService: GenerationService,
+      private eventLog: EventLogService) {
       this.itemFoundAudio = this.audioService.createAudio('./ItemFound.mp3');
     }
 
@@ -219,6 +221,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
 
   storePokemon(pokemon: PokemonItem): void {
     this.trainerService.addToTeam(pokemon);
+    this.eventLog.log('Caught ' + pokemon.text);
     this.gameStateService.setNextState('check-shininess');
     this.finishCurrentState();
   }
@@ -226,6 +229,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   setShininess(shiny: boolean): void {
     if (shiny) {
       this.trainerService.makeShiny();
+      this.eventLog.log('Shiny!');
     }
     this.finishCurrentState();
   }
@@ -332,6 +336,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     }
 
     this.trainerService.addToItems(this.itemService.getItem(itemName));
+    this.eventLog.log('Gained ' + itemName);
     this.playItemFoundAudio();
     this.finishCurrentState();
   }
@@ -362,6 +367,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
         break;
       case 'steal-pokemon':
         this.stolenPokemon = pokemon;
+        this.eventLog.log('Team Rocket stole ' + pokemon.text);
         this.removeFromTeam(pokemon);
         this.finishCurrentState();
         break;
@@ -402,6 +408,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.runningShoesUsed = false;
     this.respinReason = '';
     this.statsService.recordBattle(event.name, event.result, 'gym');
+    this.eventLog.log(event.result ? 'Beat ' + event.name : 'Lost to ' + event.name);
 
     if (event.result) {
       this.playItemFoundAudio();
@@ -483,6 +490,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
 
   rivalBattleResult(event: {result: boolean, name: string}): void {
     this.statsService.recordBattle(event.name, event.result, 'rival');
+    this.eventLog.log(event.result ? 'Beat rival ' + event.name : 'Lost to rival ' + event.name);
     if (event.result) {
       this.chooseWhoWillEvolve('battle-rival');
     } else {
@@ -517,6 +525,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
 
   teamRocketDefeated(): void {
     if (this.stolenPokemon) {
+      this.eventLog.log('Recovered ' + this.stolenPokemon.text + ' from Team Rocket');
       this.trainerService.addToTeam(this.stolenPokemon);
       this.infoModalTitle = 'Saved ' + this.stolenPokemon.text + '!';
       this.infoModalMessage = 'You recovered your ' + this.stolenPokemon.text + ' from Team Rocket.';
@@ -537,6 +546,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   }
   
   legendaryCaptureSuccess(): void {
+    this.eventLog.log('Caught legendary ' + this.currentContextPokemon.text);
     this.gameStateService.setNextState('check-shininess');
     this.trainerService.addToTeam(this.currentContextPokemon);
     this.finishCurrentState();
@@ -546,6 +556,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.pkmnIn = structuredClone(pokemon);;
     this.pkmnOut = this.currentContextPokemon;
     this.pkmnTradeTitle = "Trade!";
+    this.eventLog.log('Traded ' + this.currentContextPokemon.text + ' for ' + this.pkmnIn.text);
     this.trainerService.performTrade(this.currentContextPokemon, this.pkmnIn);
     this.auxPokemonList = [];
     this.playItemFoundAudio();
@@ -567,6 +578,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
 
   receiveItem(item: ItemItem): void {
     this.trainerService.addToItems(item);
+    this.eventLog.log('Found ' + item.text);
     this.finishCurrentState();
   }
 
@@ -605,6 +617,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.runningShoesUsed = false;
     this.respinReason = '';
     this.statsService.recordBattle(event.name, event.result, 'elite');
+    this.eventLog.log(event.result ? 'Beat Elite Four ' + event.name : 'Lost to Elite Four ' + event.name);
 
     if (event.result) {
       this.gameStateService.advanceRound();
@@ -619,6 +632,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.runningShoesUsed = false;
     this.respinReason = '';
     this.statsService.recordBattle(event.name, event.result, 'champion');
+    this.eventLog.log(event.result ? 'Beat Champion ' + event.name : 'Lost to Champion ' + event.name);
 
     if (event.result) {
       this.gameStateService.advanceRound();
@@ -635,6 +649,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
 
   resetGameAction(): void {
     this.evolutionCredits = 0;
+    this.eventLog.clear();
     this.resetGameEvent.emit();
     this.modalService.dismissAll();
   }
@@ -659,6 +674,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.pkmnOut = pokemonOut;
     this.pkmnIn = structuredClone(pokemonIn);
     this.pkmnEvoTitle = "game.main.roulette.evolve.modal.title"
+    this.eventLog.log(pokemonOut.text + ' evolved into ' + pokemonIn.text);
     this.trainerService.replaceForEvolution(this.pkmnOut, this.pkmnIn);
 
     if (this.trainerService.hasItem('exp-share') && this.expShareUsed === false) {
