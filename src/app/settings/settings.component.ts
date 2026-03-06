@@ -28,6 +28,7 @@ export class SettingsComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   devMode = false;
+  confirmDelete = false;
   private gearClicks = 0;
   private gearClickTimer: any;
 
@@ -64,6 +65,23 @@ export class SettingsComponent implements OnInit {
   onVolumeChange(event: Event): void {
     const value = +(event.target as HTMLInputElement).value;
     this.settingsService.setAudioVolume(value);
+  }
+
+  onGenderChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.settingsService.setGender(value);
+  }
+
+  deleteSaveData(): void {
+    const keys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key?.startsWith('pokemon-roulette')) {
+        keys.push(key);
+      }
+    }
+    keys.forEach(key => localStorage.removeItem(key));
+    window.location.reload();
   }
 
   goToStats(): void {

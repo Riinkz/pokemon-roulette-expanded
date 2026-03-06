@@ -4,7 +4,9 @@
     "darkmode": "Dunkler Modus",
     "explanations": "Weniger Hinweise",
     "muteAudio": "Stummschalten",
-    "skipShinyRolls": "Shiny Roulette verstecken"
+    "skipShinyRolls": "Shiny Roulette verstecken",
+    "gender": "Charakter",
+    "genderAsk": "Jedes Mal fragen"
   },
   "coffee": {
     "title": "Hast du Spaß beim Drehen? 😀",

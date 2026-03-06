@@ -115,17 +115,18 @@ export class MainGameComponent implements OnInit {
     this.rareCandyService.triggerRareCandyEvolution(rareCandy);
   }
 
-  private lastRPress = 0;
+  private rPressCount = 0;
+  private rPressTimer: any;
 
   @HostListener('window:keydown.r')
   handleRestartShortcut(): void {
-    if (!this.devMode || this.wheelSpinning) return;
-    const now = Date.now();
-    if (now - this.lastRPress < 500) {
+    if (this.wheelSpinning) return;
+    this.rPressCount++;
+    clearTimeout(this.rPressTimer);
+    this.rPressTimer = setTimeout(() => this.rPressCount = 0, 800);
+    if (this.rPressCount >= 3) {
+      this.rPressCount = 0;
       this.resetGameAction();
-      this.lastRPress = 0;
-    } else {
-      this.lastRPress = now;
     }
   }
 

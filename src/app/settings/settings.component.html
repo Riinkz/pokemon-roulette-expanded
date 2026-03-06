@@ -65,6 +65,18 @@
                         </div>
                     </div>
                     <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label>{{ 'settings.gender' | translate }}</label>
+                            <select class="form-select form-select-sm" style="width: auto"
+                                [value]="(settings$ | async)?.gender"
+                                (change)="onGenderChange($event)">
+                                <option value="">{{ 'settings.genderAsk' | translate }}</option>
+                                <option value="male">{{ 'game.main.roulette.character.boy' | translate }}</option>
+                                <option value="female">{{ 'game.main.roulette.character.girl' | translate }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12">
                         <app-language-selector></app-language-selector>
                     </div>
                     <div class="col-12 mt-3">
@@ -75,6 +87,15 @@
                             <button class="btn btn-outline-secondary btn-sm" (click)="importSave()">Import Save</button>
                         </div>
                         <input type="file" #fileInput accept=".txt" style="display:none" (change)="onFileSelected($event)">
+                        <div class="mt-2">
+                            @if (!confirmDelete) {
+                                <button class="btn btn-outline-danger btn-sm" (click)="confirmDelete = true">Delete Save Data</button>
+                            } @else {
+                                <span class="me-2">Are you sure?</span>
+                                <button class="btn btn-danger btn-sm me-1" (click)="deleteSaveData()">Yes, delete everything</button>
+                                <button class="btn btn-outline-secondary btn-sm" (click)="confirmDelete = false">Cancel</button>
+                            }
+                        </div>
                     </div>
                     <div class="col-12 mt-3">
                         <hr>

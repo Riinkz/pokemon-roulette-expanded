@@ -5,6 +5,17 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 And you may play it here: [https://zeroxm.github.io/pokemon-roulette/](https://zeroxm.github.io/pokemon-roulette/)
 
+## pokemon-roulette-expanded
+
+- Save/load game progress (localStorage persistence)
+- Export & import save data
+- Delete save data with confirmation
+- Battle stats tracking (per-leader win/loss/winrate)
+- Hall of Fame for completed runs
+- Settings: volume slider, shiny roll toggle, less explanations, persistent gender selection
+- Hidden dev mode (themes, fast spins, win chances, event log, team power, party sort)
+- Triple-R keyboard shortcut to restart
+
 ## Development server
 
 To start a local development server, run:

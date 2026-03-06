@@ -4,7 +4,9 @@
       "darkmode": "Dark Mode",
       "explanations": "Less Explanations",
       "muteAudio": "Mute Audio",
-      "skipShinyRolls": "Hide Shiny Rolls"
+      "skipShinyRolls": "Hide Shiny Rolls",
+      "gender": "Character",
+      "genderAsk": "Ask every time"
   },
   "coffee": {
     "title": "Having fun spinning? 😁",

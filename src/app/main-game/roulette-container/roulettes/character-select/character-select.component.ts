@@ -6,6 +6,7 @@ import { GenerationService } from '../../../../services/generation-service/gener
 import { TrainerService } from '../../../../services/trainer-service/trainer.service';
 import { DarkModeService } from '../../../../services/dark-mode-service/dark-mode.service';
 import { GenerationItem } from '../../../../interfaces/generation-item';
+import { SettingsService } from '../../../../services/settings-service/settings.service';
 
 @Component({
   selector: 'app-character-select',
@@ -20,7 +21,8 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
 
   constructor(private generationService: GenerationService,
               private trainerService: TrainerService,
-              private darkModeService: DarkModeService
+              private darkModeService: DarkModeService,
+              private settingsService: SettingsService
   ) { }
 
   private generationSubscription!: Subscription;
@@ -35,6 +37,11 @@ export class CharacterSelectComponent implements OnInit, OnDestroy {
       this.generation = gen;
       this.boySprite = this.trainerService.getTrainerSprite(this.generation.id, 'male');
       this.girlSprite = this.trainerService.getTrainerSprite(this.generation.id, 'female');
+
+      const savedGender = this.settingsService.currentSettings.gender;
+      if (savedGender) {
+        setTimeout(() => this.selectTrainerGender(savedGender));
+      }
     });
     this.darkMode = this.darkModeService.darkMode$;
   }

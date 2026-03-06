@@ -13,6 +13,7 @@ export interface GameSettings {
   showSort: boolean;
   audioVolume: number;
   theme: string;
+  gender: string;
 }
 
 @Injectable({
@@ -32,7 +33,8 @@ export class SettingsService {
     showPower: false,
     showSort: false,
     audioVolume: 100,
-    theme: 'default'
+    theme: 'default',
+    gender: ''
   };
 
   private settingsSubject$: BehaviorSubject<GameSettings>;
@@ -118,6 +120,10 @@ export class SettingsService {
     if (theme !== 'default') {
       this.renderer.addClass(body, `theme-${theme}`);
     }
+  }
+
+  setGender(gender: string): void {
+    this.updateSettings({ ...this.currentSettings, gender });
   }
 
   setAudioVolume(volume: number): void {
