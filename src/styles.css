@@ -18,3 +18,89 @@ body.light-mode {
   margin-left: 0px;
   margin-right: 0px;
 }
+
+/* Game Boy Theme */
+body.theme-gameboy {
+  background-color: #9bbc0f !important;
+  color: #0f380f !important;
+}
+body.theme-gameboy.dark-mode {
+  background-color: #306230 !important;
+  color: #9bbc0f !important;
+}
+body.theme-gameboy .card,
+body.theme-gameboy .modal-content {
+  background-color: #8bac0f !important;
+  color: #0f380f !important;
+  border-color: #306230 !important;
+}
+body.theme-gameboy.dark-mode .card,
+body.theme-gameboy.dark-mode .modal-content {
+  background-color: #0f380f !important;
+  color: #9bbc0f !important;
+  border-color: #9bbc0f !important;
+}
+body.theme-gameboy .btn {
+  border-color: #0f380f !important;
+  color: #0f380f !important;
+}
+body.theme-gameboy.dark-mode .btn {
+  border-color: #9bbc0f !important;
+  color: #9bbc0f !important;
+}
+body.theme-gameboy .table {
+  color: inherit !important;
+  --bs-table-bg: transparent !important;
+  --bs-table-striped-bg: rgba(15, 56, 15, 0.1) !important;
+}
+body.theme-gameboy .nav-link.active {
+  background-color: #8bac0f !important;
+  color: #0f380f !important;
+  border-color: #306230 !important;
+}
+body.theme-gameboy .badge {
+  opacity: 0.85;
+}
+
+/* Team Rocket Theme */
+body.theme-rocket {
+  background-color: #f5f0ff !important;
+  color: #1a0a2e !important;
+}
+body.theme-rocket.dark-mode {
+  background-color: #1a0a2e !important;
+  color: #e0d0ff !important;
+}
+body.theme-rocket .card,
+body.theme-rocket .modal-content {
+  background-color: #ede5ff !important;
+  color: #1a0a2e !important;
+  border-color: #b388ff !important;
+}
+body.theme-rocket.dark-mode .card,
+body.theme-rocket.dark-mode .modal-content {
+  background-color: #2d1b4e !important;
+  color: #e0d0ff !important;
+  border-color: #b388ff !important;
+}
+body.theme-rocket .btn {
+  border-color: #ff1744 !important;
+  color: #ff1744 !important;
+}
+body.theme-rocket.dark-mode .btn {
+  border-color: #ff1744 !important;
+  color: #ff1744 !important;
+}
+body.theme-rocket .table {
+  color: inherit !important;
+  --bs-table-bg: transparent !important;
+  --bs-table-striped-bg: rgba(179, 136, 255, 0.1) !important;
+}
+body.theme-rocket .nav-link.active {
+  background-color: #ff1744 !important;
+  color: #fff !important;
+  border-color: #ff1744 !important;
+}
+body.theme-rocket .badge {
+  background-color: #ff1744 !important;
+}

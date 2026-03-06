@@ -90,6 +90,11 @@ export class MainGameComponent implements OnInit {
     this.settingsService.toggleShowSort();
   }
 
+  onThemeChange(event: Event): void {
+    const theme = (event.target as HTMLSelectElement).value;
+    this.settingsService.setTheme(theme);
+  }
+
   get settings() {
     return this.settingsService.currentSettings;
   }

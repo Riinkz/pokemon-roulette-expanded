@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { BehaviorSubject, distinctUntilChanged, Observable } from 'rxjs';
 
 export interface GameSettings {
@@ -12,6 +12,7 @@ export interface GameSettings {
   showPower: boolean;
   showSort: boolean;
   audioVolume: number;
+  theme: string;
 }
 
 @Injectable({
@@ -30,13 +31,18 @@ export class SettingsService {
     showEventLog: false,
     showPower: false,
     showSort: false,
-    audioVolume: 100
+    audioVolume: 100,
+    theme: 'default'
   };
 
   private settingsSubject$: BehaviorSubject<GameSettings>;
+  private renderer: Renderer2;
+  private readonly themeClasses = ['theme-gameboy', 'theme-rocket'];
 
-  constructor() {
+  constructor(rendererFactory: RendererFactory2) {
+    this.renderer = rendererFactory.createRenderer(null, null);
     this.settingsSubject$ = new BehaviorSubject(this.getInitialSettings());
+    this.applyTheme(this.currentSettings.theme);
   }
 
   get settings$(): Observable<GameSettings> {
@@ -99,6 +105,19 @@ export class SettingsService {
     const currentSettings = this.currentSettings;
     const newSettings = { ...currentSettings, showSort: !currentSettings.showSort };
     this.updateSettings(newSettings);
+  }
+
+  setTheme(theme: string): void {
+    this.applyTheme(theme);
+    this.updateSettings({ ...this.currentSettings, theme });
+  }
+
+  private applyTheme(theme: string): void {
+    const body = document.body;
+    this.themeClasses.forEach(cls => this.renderer.removeClass(body, cls));
+    if (theme !== 'default') {
+      this.renderer.addClass(body, `theme-${theme}`);
+    }
   }
 
   setAudioVolume(volume: number): void {
