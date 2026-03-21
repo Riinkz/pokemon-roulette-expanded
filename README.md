@@ -13,7 +13,7 @@ And you may play it here: [https://zeroxm.github.io/pokemon-roulette/](https://z
 - Battle stats tracking (per-leader win/loss/winrate)
 - Hall of Fame for completed runs
 - Settings: volume slider, shiny roll toggle, less explanations, persistent gender selection
-- Hidden dev mode (themes, fast spins, win chances, event log, team power, party sort)
+- Hidden dev mode (themes, fast spins, win chances, event log, team power, party sort) - click the left gear on the settings page 5 times fast.
 - Triple-R keyboard shortcut to restart
 
 ## Development server
