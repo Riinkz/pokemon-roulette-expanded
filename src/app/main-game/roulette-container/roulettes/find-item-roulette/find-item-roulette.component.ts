@@ -7,7 +7,8 @@ import { WheelComponent } from '../../../../wheel/wheel.component';
 import { ItemsService } from '../../../../services/items-service/items.service';
 import { ItemSpriteService } from '../../../../services/item-sprite-service/item-sprite.service';
 import { ItemItem } from '../../../../interfaces/item-item';
-import { AudioService } from '../../../../services/audio-service/audio.service';
+import { SoundFxHandle, SoundFxService } from '../../../../services/sound-fx-service/sound-fx.service';
+import { ModalQueueService } from '../../../../services/modal-queue-service/modal-queue.service';
 
 @Component({
   selector: 'app-find-item-roulette',
@@ -22,18 +23,19 @@ import { AudioService } from '../../../../services/audio-service/audio.service';
 export class FindItemRouletteComponent {
 
   constructor(private modalService: NgbModal,
+    private modalQueueService: ModalQueueService,
     private itemService: ItemsService,
     private itemSpriteService: ItemSpriteService,
-    private audioService: AudioService) {
+    private soundFxService: SoundFxService) {
     this.items = itemService.getAllItems();
-    this.itemFoundAudio = this.audioService.createAudio('./ItemFound.mp3');
+    this.itemFoundAudio = this.soundFxService.createItemFoundSoundFx();
   }
 
   @ViewChild('itemExplainerModal', { static: true }) itemExplainerModal!: TemplateRef<any>;
   items: ItemItem[] = [];
   selectedItem: ItemItem | null = null;
   @Output() itemSelectedEvent = new EventEmitter<ItemItem>();
-  itemFoundAudio!: HTMLAudioElement;
+  itemFoundAudio!: SoundFxHandle;
 
   onItemSelected(index: number): void {
     this.selectedItem = this.items[index];
@@ -44,22 +46,22 @@ export class FindItemRouletteComponent {
       }
     });
 
-    this.audioService.playAudio(this.itemFoundAudio, 0.25);
+    void this.soundFxService.playSoundFx(this.itemFoundAudio, 0.25);
 
-    const modalRef = this.modalService.open(this.itemExplainerModal, {
+    this.modalQueueService.open(this.itemExplainerModal, {
       centered: true,
       size: 'md',
       keyboard: false
-    });
-
-    modalRef.result.then(() => {
-      if (this.selectedItem) {
-        this.itemSelectedEvent.emit(this.selectedItem);
-      }
-    }, () => {
-      if (this.selectedItem) {
-        this.itemSelectedEvent.emit(this.selectedItem);
-      }
+    }).then(modalRef => {
+      modalRef.result.then(() => {
+        if (this.selectedItem) {
+          this.itemSelectedEvent.emit(this.selectedItem);
+        }
+      }, () => {
+        if (this.selectedItem) {
+          this.itemSelectedEvent.emit(this.selectedItem);
+        }
+      });
     });
   }
 

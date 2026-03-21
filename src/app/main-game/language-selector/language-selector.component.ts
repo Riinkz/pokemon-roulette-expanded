@@ -2,7 +2,8 @@ import {Component, inject} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Language } from '../../interfaces/language';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import {NgIcon} from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { bootstrapCheck } from '@ng-icons/bootstrap-icons';
 
 @Component({
   selector: 'app-language-selector',
@@ -12,6 +13,9 @@ import {NgIcon} from '@ng-icons/core';
     NgbDropdownModule,
     NgIcon
   ],
+  providers: [
+    provideIcons({ bootstrapCheck })
+  ],
   standalone: true
 })
 export class LanguageSelectorComponent {
@@ -19,11 +23,12 @@ export class LanguageSelectorComponent {
 
   languages: Language[] = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'fr', name: 'Français', flag: '🇫🇷' },
     { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
-    { code: 'de', name: 'German', flag: '🇩🇪' },
-  ]
+  ];
 
   currentLanguage: Language = this.languages[0];
 
