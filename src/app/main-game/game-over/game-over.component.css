@@ -71,3 +71,19 @@
         width: 100%;
     }
 }
+
+@media (max-width: 767px) {
+    .title-text {
+        font-size: 1rem;
+        margin-top: 1rem !important;
+    }
+    .card-title {
+        font-size: 0.85rem;
+    }
+    .card {
+        margin: 0 0.5rem !important;
+    }
+    .pokemon-container {
+        margin: 0.25rem;
+    }
+}

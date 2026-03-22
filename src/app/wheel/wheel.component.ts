@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { WheelItem } from '../interfaces/wheel-item';
 import { DarkModeService } from '../services/dark-mode-service/dark-mode.service';
 import { Observable } from 'rxjs';
@@ -48,6 +48,7 @@ export class WheelComponent implements AfterViewInit, OnChanges {
   private readonly mobileBreakpoint = 768;
 
   constructor(
+    private el: ElementRef,
     private darkModeService: DarkModeService,
     private gameStateService: GameStateService,
     private translateService: TranslateService,
@@ -109,8 +110,14 @@ export class WheelComponent implements AfterViewInit, OnChanges {
     const viewportMin = Math.min(window.innerHeight, window.innerWidth);
     const wheelScale = window.innerWidth <= this.mobileBreakpoint ? 0.64 : 0.50;
 
-    this.canvasHeight = viewportMin * wheelScale;
-    this.wheelWidth = this.canvasHeight;
+    let size = viewportMin * wheelScale;
+    const hostWidth = this.el.nativeElement?.offsetWidth;
+    if (hostWidth > 0) {
+      size = Math.min(size, hostWidth - this.cursorWidth - 10);
+    }
+
+    this.canvasHeight = size;
+    this.wheelWidth = size;
     this.fontSize = this.wheelWidth / 24;
 
     if (this.items.length >= 32) {
@@ -272,6 +279,11 @@ export class WheelComponent implements AfterViewInit, OnChanges {
   }
 
   getRandomWeightedIndex(): number {
+    if (this.settingsService.currentSettings.alwaysWin) {
+      const greenIndex = this.items.findIndex(i => i.fillStyle === 'green');
+      if (greenIndex >= 0) return greenIndex;
+    }
+
     const totalWeight = this.getTotalWeights();
     let random = Math.random() * totalWeight;
     let accumulatedWeight = 0;

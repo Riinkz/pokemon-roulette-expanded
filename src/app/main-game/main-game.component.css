@@ -1,5 +1,23 @@
 .game-container {
 	width: 100%;
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+@media (min-width: 2000px) {
+	.game-container {
+		max-width: 75vw;
+	}
+}
+
+@media (min-width: 3000px) {
+	.game-container {
+		max-width: 70vw;
+	}
+}
+
+.main-game {
+	overflow: hidden;
 }
 
 .map-container {

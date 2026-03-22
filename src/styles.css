@@ -1,5 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: "Pokemon GB", Monospace, sans-serif;
 }
@@ -104,3 +108,4 @@ body.theme-rocket .nav-link.active {
 body.theme-rocket .badge {
   background-color: #ff1744 !important;
 }
+
