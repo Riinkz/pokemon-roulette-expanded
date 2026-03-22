@@ -6,7 +6,14 @@
 
 <ng-template #pcStorageModal let-modal>
   <div class="modal-body" cdkDropListGroup>
-    <h2>{{ 'trainer.storage.team' | translate }}</h2>
+    <div class="d-flex align-items-center justify-content-between mb-1">
+      <h2 class="mb-0">{{ 'trainer.storage.team' | translate }}</h2>
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary" title="Sort by Power" (click)="sortList(trainerTeam, 'power')">Power</button>
+        <button class="btn btn-outline-secondary" title="Sort by Dex #" (click)="sortList(trainerTeam, 'dex')">Dex</button>
+        <button class="btn btn-outline-secondary" title="Sort by Name" (click)="sortList(trainerTeam, 'name')">Name</button>
+      </div>
+    </div>
     <div  id="trainerTeam"
           cdkDropList
           cdkDropListOrientation="mixed"
@@ -16,12 +23,27 @@
           [cdkDropListEnterPredicate]="teamIsFullPredicate">
           @for (pokemon of trainerTeam; track pokemon) {
             <div  class="pokemon-storage-card shadow"
+                  [class.selected]="selected.has(pokemon)"
+                  [cdkDragDisabled]="selectMode"
+                  (click)="selectMode ? toggleSelect(pokemon) : null"
                   cdkDrag>
               <img class="img-fluid" [src]="getSprite(pokemon)">
+              @if (!selectMode && trainerTeam.length + storedPokemon.length > 1) {
+                <button class="release-btn" title="Release" (click)="releasePokemon(pokemon)">✕</button>
+              }
             </div>
           }
     </div>
-    <h2>{{ 'trainer.storage.stored' | translate }}</h2>
+    <div class="d-flex align-items-center justify-content-between mb-1 mt-3">
+      <h2 class="mb-0">{{ 'trainer.storage.stored' | translate }}</h2>
+      @if (storedPokemon.length > 1) {
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-outline-secondary" title="Sort by Power" (click)="sortList(storedPokemon, 'power')">Power</button>
+          <button class="btn btn-outline-secondary" title="Sort by Dex #" (click)="sortList(storedPokemon, 'dex')">Dex</button>
+          <button class="btn btn-outline-secondary" title="Sort by Name" (click)="sortList(storedPokemon, 'name')">Name</button>
+        </div>
+      }
+    </div>
     <div  id="storedPokemon"
           cdkDropList
           cdkDropListOrientation="mixed"
@@ -31,15 +53,31 @@
           [cdkDropListEnterPredicate]="lastPokemonPredicate">
       @for (pokemon of storedPokemon; track pokemon) {
         <div  class="pokemon-storage-card shadow"
+              [class.selected]="selected.has(pokemon)"
+              [cdkDragDisabled]="selectMode"
               [cdkDragData]="pokemon"
+              (click)="selectMode ? toggleSelect(pokemon) : null"
               cdkDrag>
           <img [src]="getSprite(pokemon)" class="img-fluid">
+          @if (!selectMode && trainerTeam.length + storedPokemon.length > 1) {
+            <button class="release-btn" title="Release" (click)="releasePokemon(pokemon)">✕</button>
+          }
         </div>
       }
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="logOut()">{{ 'trainer.storage.logout' | translate }}</button>
+    @if (selectMode) {
+      <button type="button" class="btn btn-danger" [disabled]="selected.size === 0" (click)="releaseSelected()">
+        Release ({{ selected.size }})
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="toggleSelectMode()">Cancel</button>
+    } @else {
+      @if (trainerTeam.length + storedPokemon.length > 1) {
+        <button type="button" class="btn btn-outline-danger" (click)="toggleSelectMode()">Batch Release</button>
+      }
+      <button type="button" class="btn btn-outline-dark" (click)="logOut()">{{ 'trainer.storage.logout' | translate }}</button>
+    }
   </div>
 </ng-template>
 

@@ -49,6 +49,8 @@ export class StoragePcComponent implements OnInit, OnDestroy {
     currentGameState!: GameState;
     infoModalTitle = '';
     infoModalMessage = '';
+    selectMode = false;
+    selected = new Set<PokemonItem>();
     private readonly subscriptions = new Subscription();
     private removePcTurningOnEndedListener: (() => void) | null = null;
 
@@ -126,6 +128,47 @@ export class StoragePcComponent implements OnInit, OnDestroy {
         );
       }
       this.trainerService.updateTeam();
+    }
+
+    sortList(list: PokemonItem[], mode: 'power' | 'dex' | 'name'): void {
+      if (mode === 'power') list.sort((a, b) => b.power - a.power);
+      else if (mode === 'dex') list.sort((a, b) => a.pokemonId - b.pokemonId);
+      else list.sort((a, b) => a.text.localeCompare(b.text));
+      this.trainerService.updateTeam();
+    }
+
+    releasePokemon(pokemon: PokemonItem): void {
+      if (this.trainerTeam.length + this.storedPokemon.length <= 1) return;
+      if (!confirm('Release this Pokémon? This cannot be undone.')) return;
+      this.trainerService.removeFromTeam(pokemon);
+      this.trainerTeam = this.trainerService.getTeam();
+      this.storedPokemon = this.trainerService.getStored();
+    }
+
+    toggleSelectMode(): void {
+      this.selectMode = !this.selectMode;
+      this.selected.clear();
+    }
+
+    toggleSelect(pokemon: PokemonItem): void {
+      if (this.selected.has(pokemon)) {
+        this.selected.delete(pokemon);
+      } else {
+        const total = this.trainerTeam.length + this.storedPokemon.length;
+        if (this.selected.size < total - 1) {
+          this.selected.add(pokemon);
+        }
+      }
+    }
+
+    releaseSelected(): void {
+      if (this.selected.size === 0) return;
+      if (!confirm(`Release ${this.selected.size} Pokémon? This cannot be undone.`)) return;
+      this.selected.forEach(p => this.trainerService.removeFromTeam(p));
+      this.selected.clear();
+      this.selectMode = false;
+      this.trainerTeam = this.trainerService.getTeam();
+      this.storedPokemon = this.trainerService.getStored();
     }
 
     lastPokemonPredicate  = () => this.trainerTeam.length > 1
