@@ -253,6 +253,14 @@ export class TrainerService {
     })
   }
 
+  maxPowerTeam(): void {
+    const all = [...this.trainerTeam, ...this.storedPokemon].sort((a, b) => b.power - a.power);
+    this.trainerTeam = all.slice(0, 6);
+    this.storedPokemon = all.slice(6);
+    this.trainerTeamObservable.next(this.trainerTeam);
+    this.saveState();
+  }
+
   sortTeam(mode: 'power' | 'newest'): void {
     if (mode === 'power') {
       this.trainerTeam.sort((a, b) => b.power - a.power);
@@ -273,6 +281,11 @@ export class TrainerService {
     this.trainerTeam = [];
     this.storedPokemon = [];
     this.trainerTeamObservable.next(this.trainerTeam);
+    this.saveState();
+  }
+
+  clearStorage(): void {
+    this.storedPokemon = [];
     this.saveState();
   }
 

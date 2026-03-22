@@ -90,6 +90,14 @@ export class MainGameComponent implements OnInit {
     this.settingsService.toggleShowSort();
   }
 
+  toggleAlwaysWin(): void {
+    this.settingsService.toggleAlwaysWin();
+  }
+
+  maxPowerTeam(): void {
+    this.trainerService.maxPowerTeam();
+  }
+
   onThemeChange(event: Event): void {
     const theme = (event.target as HTMLSelectElement).value;
     this.settingsService.setTheme(theme);

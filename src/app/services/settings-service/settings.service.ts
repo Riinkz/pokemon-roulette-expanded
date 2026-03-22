@@ -11,6 +11,7 @@ export interface GameSettings {
   showEventLog: boolean;
   showPower: boolean;
   showSort: boolean;
+  alwaysWin: boolean;
   audioVolume: number;
   theme: string;
   gender: string;
@@ -32,6 +33,7 @@ export class SettingsService {
     showEventLog: false,
     showPower: false,
     showSort: false,
+    alwaysWin: false,
     audioVolume: 100,
     theme: 'default',
     gender: ''
@@ -106,6 +108,12 @@ export class SettingsService {
   toggleShowSort(): void {
     const currentSettings = this.currentSettings;
     const newSettings = { ...currentSettings, showSort: !currentSettings.showSort };
+    this.updateSettings(newSettings);
+  }
+
+  toggleAlwaysWin(): void {
+    const currentSettings = this.currentSettings;
+    const newSettings = { ...currentSettings, alwaysWin: !currentSettings.alwaysWin };
     this.updateSettings(newSettings);
   }
 

@@ -1,21 +1,21 @@
 <div class="game-container">
     <div class="row">
-        <div class="extra-options col-12 col-sm-3 d-flex flex-column">
-            <div class="row col-12 col-sm-7 py-2">
-                <div class="col-6 col-sm-12 mb-2">
+        <div class="extra-options col-12 col-md-3 d-flex flex-column">
+            <div class="row col-12 col-md-7 py-2">
+                <div class="col-6 col-md-12 mb-2">
                     <app-settings-button></app-settings-button>
                 </div>
-                <div class="col-6 col-sm-12 mb-2">
+                <div class="col-6 col-md-12 mb-2">
                     <app-coffee-button></app-coffee-button>
                 </div>
-                <div class="col-6 col-sm-12 mb-2">
+                <div class="col-6 col-md-12 mb-2">
                     <app-restart-game-buttom (restartEvent)="resetGameAction()"></app-restart-game-buttom>
                 </div>
-                <div class="col-6 col-sm-12 mb-2">
+                <div class="col-6 col-md-12 mb-2">
                     <app-language-selector></app-language-selector>
                 </div>
                 @if (devMode) {
-                <div class="col-6 col-sm-12 mb-2 position-relative">
+                <div class="col-6 col-md-12 mb-2 position-relative">
                     <button type="button" class="btn btn-warning w-100" (click)="toggleDevMenu()">
                         <ng-icon name="bootstrapWrench"></ng-icon> Dev
                     </button>
@@ -46,6 +46,12 @@
                                 [checked]="settings.showSort" (change)="toggleShowSort()">
                             <label class="form-check-label" for="showSort">Sort Party</label>
                         </div>
+                        <div class="form-check form-switch mb-1">
+                            <input class="form-check-input" type="checkbox" id="alwaysWin"
+                                [checked]="settings.alwaysWin" (change)="toggleAlwaysWin()">
+                            <label class="form-check-label" for="alwaysWin">Always Win</label>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger w-100 mt-1" (click)="maxPowerTeam()">Max Power</button>
                         <hr class="my-1">
                         <div class="d-flex align-items-center gap-2">
                             <label class="form-check-label" for="themeSelect">Theme</label>
@@ -72,7 +78,7 @@
                     <ng-icon name="bootstrapMap"></ng-icon> Town Map
                 </button> -->
         </div>
-        <div class="main-game col-12 col-sm-5">
+        <div class="main-game col-12 col-md-5">
             <app-roulette-container
                 (resetGameEvent)="resetGame()">
             </app-roulette-container>
@@ -88,7 +94,7 @@
             }
         </div>
 
-        <div class="trainer-info col-12 col-sm-4">
+        <div class="trainer-info col-12 col-md-4">
             <div class="trainer-team">
                 <app-trainer-team></app-trainer-team>
             </div>
