@@ -118,7 +118,8 @@
       "congrats": "Congratulations!",
       "share": "Share",
       "shareTitle": "Pokemon Champion of {{region}}",
-      "shareText": "Look what I got!"
+      "shareText": "Look what I got!",
+      "continue": "Next Region"
     },
     "main": {
       "item": {

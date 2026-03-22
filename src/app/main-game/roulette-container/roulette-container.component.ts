@@ -126,7 +126,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
             this.respinReason = 'Multitask x' + this.multitaskCounter;
             this.multitaskCounter--;
           }
-          if (this.runningShoesUsed) {
+          if (this.runningShoesActive) {
             this.respinReason = 'items.running-shoes.name';
           }
         }
@@ -138,11 +138,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
           }));
           const gen = this.generationService.getCurrentGeneration();
           this.statsService.recordHallOfFame(team, gen.region);
-
-          // clear saves so F5 starts fresh (in-memory state stays for end screen)
-          this.gameStateService.clearSave();
-          this.trainerService.clearSave();
-          this.generationService.clearSave();
+          this.statsService.recordRegionCompleted();
         }
       });
 
@@ -152,6 +148,10 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
 
     this.gameStateService.wheelSpinningObserver.subscribe(state => {
       this.wheelSpinning = state;
+    });
+
+    this.gameStateService.regionsCompletedObserver.subscribe(n => {
+      this.regionsCompleted = n;
     });
 
     // Subscribe to rare candy evolution trigger
@@ -192,19 +192,21 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   customWheelTitle = '';
   evolutionCredits: number = 0;
   expSharePokemon: PokemonItem | null = null;
-  expShareUsed: boolean = false;
+  expShareEvosRemaining: number = 0;
   fromLeader: number = 0;
   infoModalMessage = '';
   infoModalTitle = '';
   itemFoundAudio!: SoundFxHandle;
   leadersDefeatedAmount: number = 0;
+  regionsCompleted: number = 0;
   multitaskCounter: number = 0;
   pkmnEvoTitle = '';
   pkmnIn!: PokemonItem;
   pkmnOut!: PokemonItem;
   pkmnTradeTitle = '';
   respinReason = '';
-  runningShoesUsed: boolean = false;
+  runningShoesRespins: number = 0;
+  runningShoesActive: boolean = false;
   stolenPokemon!: PokemonItem | null;
   wheelSpinning: boolean = false;
 
@@ -217,14 +219,28 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.gameStateService.finishCurrentState();
 
     if (this.currentGameState === 'adventure-continues') {
-      if (this.trainerService.hasItem('running-shoes') && !this.runningShoesUsed) {
-        this.runningShoesUsed = true;
+      if (this.runningShoesRespins > 0) {
+        this.runningShoesRespins--;
+        this.runningShoesActive = true;
         this.gameStateService.setNextState('adventure-continues');
+      } else {
+        const shoesCount = this.trainerService.trainerItems.filter(i => i.name === 'running-shoes').length;
+        if (shoesCount > 0) {
+          this.runningShoesRespins = shoesCount - 1;
+          this.runningShoesActive = true;
+          this.gameStateService.setNextState('adventure-continues');
+        } else {
+          this.runningShoesActive = false;
+        }
       }
     }
   }
 
   handleGenerationSelected(): void {
+    if (this.regionsCompleted > 0) {
+      const gen = this.generationService.getCurrentGeneration();
+      this.trainerService.setTrainer(gen.id, this.trainerService.gender);
+    }
     this.finishCurrentState();
   }
 
@@ -421,7 +437,8 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   }
 
   gymBattleResult(event: {result: boolean, name: string}): void {
-    this.runningShoesUsed = false;
+    this.runningShoesRespins = 0;
+    this.runningShoesActive = false;
     this.respinReason = '';
     this.statsService.recordBattle(event.name, event.result, 'gym');
     this.eventLog.log(event.result ? 'Beat ' + event.name : 'Lost to ' + event.name);
@@ -580,6 +597,7 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   
   legendaryCaptureSuccess(): void {
     this.eventLog.log('Caught legendary ' + this.currentContextPokemon.text);
+    this.statsService.recordLegendaryCaught();
     this.preparePokemonCapture(this.currentContextPokemon);
   }
 
@@ -645,7 +663,8 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
   }
 
   eliteFourBattleResult(event: {result: boolean, name: string}): void {
-    this.runningShoesUsed = false;
+    this.runningShoesRespins = 0;
+    this.runningShoesActive = false;
     this.respinReason = '';
     this.statsService.recordBattle(event.name, event.result, 'elite');
     this.eventLog.log(event.result ? 'Beat Elite Four ' + event.name : 'Lost to Elite Four ' + event.name);
@@ -659,8 +678,32 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.finishCurrentState();
   }
 
+  continueToNextRegion(): void {
+    const gen = this.generationService.getCurrentGeneration();
+    const completedCount = this.gameStateService.getCompletedRegionIds().length + 1; // +1 for current region
+
+    if (completedCount >= 9) {
+      // all regions done — grand champion entry, full reset, loop
+      const team = this.trainerService.getTeam().map(p => ({
+        name: p.text, pokemonId: p.pokemonId, shiny: p.shiny
+      }));
+      this.statsService.recordHallOfFame(team, 'Grand Champion', true);
+      this.statsService.recordEndlessWin();
+      this.trainerService.resetTeam();
+      this.trainerService.resetItems();
+      this.trainerService.resetBadges();
+      this.gameStateService.resetGameState();
+    } else {
+      this.trainerService.resetBadges();
+      this.trainerService.resetItems();
+      this.trainerService.clearStorage();
+      this.gameStateService.startNextRegion(gen.id);
+    }
+  }
+
   championBattleResult(event: {result: boolean, name: string}): void {
-    this.runningShoesUsed = false;
+    this.runningShoesRespins = 0;
+    this.runningShoesActive = false;
     this.respinReason = '';
     this.statsService.recordBattle(event.name, event.result, 'champion');
     this.eventLog.log(event.result ? 'Beat Champion ' + event.name : 'Lost to Champion ' + event.name);
@@ -731,13 +774,17 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
     this.eventLog.log(pokemonOut.text + ' evolved into ' + pokemonIn.text);
     this.trainerService.replaceForEvolution(this.pkmnOut, this.pkmnIn);
 
-    if (this.trainerService.hasItem('exp-share') && this.expShareUsed === false) {
-      this.expShareUsed = true;
+    if (this.expShareEvosRemaining > 0) {
+      this.expShareEvosRemaining--;
       this.expSharePokemon = this.pkmnIn;
       this.secondEvolution();
-    } else if (this.trainerService.hasItem('exp-share') && this.expShareUsed === true) {
-      this.expShareUsed = false;
-      this.expSharePokemon = null;
+    } else {
+      const expShareCount = this.trainerService.trainerItems.filter(i => i.name === 'exp-share').length;
+      if (expShareCount > 0) {
+        this.expShareEvosRemaining = expShareCount - 1;
+        this.expSharePokemon = this.pkmnIn;
+        this.secondEvolution();
+      }
     }
   }
 

@@ -48,6 +48,7 @@ export class GymBattleRouletteComponent implements OnInit, OnDestroy {
   trainerTeam!: PokemonItem[];
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
+  @Input() regionsCompleted: number = 0;
   @Input() fromLeader!: number;
   @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromLeaderChange = new EventEmitter<number>();
@@ -135,6 +136,11 @@ export class GymBattleRouletteComponent implements OnInit, OnDestroy {
     }
     // Gym battles should starts with 1 noOdds
     noOdds.push({ text: "game.main.roulette.gym.no", fillStyle: "crimson", weight: 1 });
+
+    // Endless mode: each completed region adds +1 NO slot
+    for (let i = 0; i < this.regionsCompleted; i++) {
+      noOdds.push({ text: "game.main.roulette.gym.no", fillStyle: "crimson", weight: 1 });
+    }
 
     this.victoryOdds = interleaveOdds(yesOdds, noOdds);
   }

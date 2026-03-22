@@ -118,7 +118,8 @@
       "congrats": "Gratulation!",
       "share": "Teilen",
       "shareTitle": "Pokémon Champ von {{region}}",
-      "shareText": "Schau, was ich geschafft habe!"
+      "shareText": "Schau, was ich geschafft habe!",
+      "continue": "Nächste Region"
     },
     "main": {
       "item": {

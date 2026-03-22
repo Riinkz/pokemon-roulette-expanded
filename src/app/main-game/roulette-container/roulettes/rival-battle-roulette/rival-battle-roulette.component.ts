@@ -48,6 +48,7 @@ export class RivalBattleRouletteComponent implements OnInit, OnDestroy {
   trainerTeam!: PokemonItem[];
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
+  @Input() regionsCompleted: number = 0;
   @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromRivalChange = new EventEmitter<number>();
 
@@ -126,6 +127,10 @@ export class RivalBattleRouletteComponent implements OnInit, OnDestroy {
     }
     // Rival battles mirrors the current gym-leader, but you don't lose the game on then, so it starts with 1 noOdds
     noOdds.push({ text: "game.main.roulette.rival.no", fillStyle: "crimson", weight: 1 });
+
+    for (let i = 0; i < this.regionsCompleted; i++) {
+      noOdds.push({ text: "game.main.roulette.rival.no", fillStyle: "crimson", weight: 1 });
+    }
 
     this.victoryOdds = interleaveOdds(yesOdds, noOdds);
   }

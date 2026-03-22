@@ -48,6 +48,7 @@ export class EliteFourBattleRouletteComponent implements OnInit, OnDestroy {
   trainerTeam!: PokemonItem[];
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
+  @Input() regionsCompleted: number = 0;
   @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromEliteChange = new EventEmitter<number>();
 
@@ -136,6 +137,10 @@ export class EliteFourBattleRouletteComponent implements OnInit, OnDestroy {
     // elite four battles should be harder, so it starts with 2 noOdds
     noOdds.push({ text: "game.main.roulette.elite.no", fillStyle: "crimson", weight: 1 });
     noOdds.push({ text: "game.main.roulette.elite.no", fillStyle: "crimson", weight: 1 });
+
+    for (let i = 0; i < this.regionsCompleted; i++) {
+      noOdds.push({ text: "game.main.roulette.elite.no", fillStyle: "crimson", weight: 1 });
+    }
 
     this.victoryOdds = interleaveOdds(yesOdds, noOdds);
   }

@@ -36,6 +36,11 @@ export class GenerationService {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(index));
   }
 
+  setGenerationById(id: number): void {
+    const index = this.generations.findIndex(g => g.id === id);
+    if (index >= 0) this.setGeneration(index);
+  }
+
   getGeneration(): Observable<GenerationItem> {
     return this.generation.asObservable();
   }

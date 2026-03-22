@@ -52,6 +52,17 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end gap-2">
+                @if (isLastRegion) {
+                <button class="btn btn-warning"
+                        (click)="continueEvent.emit()">
+                        Grand Champion!
+                </button>
+                } @else {
+                <button class="btn btn-primary"
+                        (click)="continueEvent.emit()">
+                        {{ 'game.end.continue' | translate }}
+                </button>
+                }
                 <button class="btn btn-success"
                         (click)="shareResults()">
                         <ng-icon name="bootstrapShare"></ng-icon> {{ 'game.end.share' | translate }}

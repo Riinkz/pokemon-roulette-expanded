@@ -46,6 +46,7 @@ export class ChampionBattleRouletteComponent implements OnInit, OnDestroy {
   trainerTeam!: PokemonItem[];
   trainerItems!: ItemItem[];
   @Input() currentRound!: number;
+  @Input() regionsCompleted: number = 0;
   @Output() battleResultEvent = new EventEmitter<{result: boolean, name: string}>();
   @Output() fromChampionChange = new EventEmitter<number>();
 
@@ -137,6 +138,10 @@ export class ChampionBattleRouletteComponent implements OnInit, OnDestroy {
     noOdds.push({ text: "game.main.roulette.champion.no", fillStyle: "crimson", weight: 1 });
     noOdds.push({ text: "game.main.roulette.champion.no", fillStyle: "crimson", weight: 1 });
     noOdds.push({ text: "game.main.roulette.champion.no", fillStyle: "crimson", weight: 1 });
+
+    for (let i = 0; i < this.regionsCompleted; i++) {
+      noOdds.push({ text: "game.main.roulette.champion.no", fillStyle: "crimson", weight: 1 });
+    }
 
     this.victoryOdds = interleaveOdds(yesOdds, noOdds);
   }

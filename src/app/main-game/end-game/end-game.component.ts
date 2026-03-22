@@ -1,9 +1,10 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { GenerationService } from '../../services/generation-service/generation.service';
 import { TrainerService } from '../../services/trainer-service/trainer.service';
 import { Subscription } from 'rxjs';
 import { GenerationItem } from '../../interfaces/generation-item';
 import { DarkModeService } from '../../services/dark-mode-service/dark-mode.service';
+import { GameStateService } from '../../services/game-state-service/game-state.service';
 import { PokemonItem } from '../../interfaces/pokemon-item';
 import { CommonModule } from '@angular/common';
 import { NgIconsModule } from '@ng-icons/core';
@@ -24,10 +25,15 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 })
 export class EndGameComponent implements OnInit, AfterViewInit, OnDestroy {
 
+  @Output() continueEvent = new EventEmitter<void>();
+  canContinue = true;
+  isLastRegion = false;
+
   constructor(
     private generationService: GenerationService,
     private trainerService: TrainerService,
     private darkModeService: DarkModeService,
+    private gameStateService: GameStateService,
     private translate: TranslateService
   ) { }
 
@@ -47,6 +53,7 @@ export class EndGameComponent implements OnInit, AfterViewInit, OnDestroy {
   private darkModeSubscription!: Subscription;
 
   ngOnInit(): void {
+    this.isLastRegion = this.gameStateService.getCompletedRegionIds().length >= 8;
     this.generationSubscription = this.generationService.getGeneration().subscribe(gen => {
       this.generation = gen;
     });

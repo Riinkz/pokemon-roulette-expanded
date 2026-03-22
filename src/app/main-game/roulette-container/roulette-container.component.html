@@ -49,6 +49,7 @@
   @case ('gym-battle') {
     <app-gym-battle-roulette
         [currentRound]="leadersDefeatedAmount"
+        [regionsCompleted]="regionsCompleted"
         [(fromLeader)]="fromLeader"
         (battleResultEvent)="gymBattleResult($event)">
     </app-gym-battle-roulette>
@@ -167,6 +168,7 @@
   @case ('battle-rival') {
     <app-rival-battle-roulette
         [currentRound]="leadersDefeatedAmount"
+        [regionsCompleted]="regionsCompleted"
         (battleResultEvent)="rivalBattleResult($event)">
     </app-rival-battle-roulette>
   }
@@ -186,17 +188,21 @@
   @case ('elite-four-battle') {
     <app-elite-four-battle-roulette
         [currentRound]="leadersDefeatedAmount"
+        [regionsCompleted]="regionsCompleted"
         (battleResultEvent)="eliteFourBattleResult($event)">
     </app-elite-four-battle-roulette>
   }
   @case ('champion-battle') {
     <app-champion-battle-roulette
         [currentRound]="leadersDefeatedAmount"
+        [regionsCompleted]="regionsCompleted"
         (battleResultEvent)="championBattleResult($event)">
     </app-champion-battle-roulette>
   }
   @case ('game-finish') {
-    <app-end-game></app-end-game>
+    <app-end-game
+        (continueEvent)="continueToNextRegion()">
+    </app-end-game>
   }
   @case ('game-over') {
     <app-game-over

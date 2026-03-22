@@ -16,6 +16,10 @@ export class GameStateService {
   private currentRound = new BehaviorSubject<number>(0);
   currentRoundObserver = this.currentRound.asObservable();
 
+  private regionsCompleted = new BehaviorSubject<number>(0);
+  regionsCompletedObserver = this.regionsCompleted.asObservable();
+  private completedRegionIds: number[] = [];
+
   private wheelSpinning = new BehaviorSubject<boolean>(false);
   wheelSpinningObserver = this.wheelSpinning.asObservable();
 
@@ -91,6 +95,33 @@ export class GameStateService {
     this.wheelSpinning.next(state);
   }
 
+  getCompletedRegionIds(): number[] {
+    return this.completedRegionIds;
+  }
+
+  startNextRegion(completedGenId: number): void {
+    this.completedRegionIds.push(completedGenId);
+    this.regionsCompleted.next(this.regionsCompleted.value + 1);
+    this.stateStack = [
+      'game-finish',
+      'champion-battle',
+      'elite-four-battle', 'elite-four-battle', 'elite-four-battle', 'elite-four-battle',
+      'elite-four-preparation',
+      'gym-battle', 'adventure-continues',
+      'gym-battle', 'adventure-continues',
+      'gym-battle', 'adventure-continues',
+      'gym-battle', 'adventure-continues',
+      'gym-battle', 'adventure-continues',
+      'gym-battle', 'adventure-continues',
+      'gym-battle', 'adventure-continues',
+      'gym-battle',
+      'start-adventure'
+    ];
+    this.currentRound.next(0);
+    this.state.next('game-start');
+    this.saveState();
+  }
+
   resetGameState(): void {
     this.clearSave();
     this.initializeStates();
@@ -100,6 +131,8 @@ export class GameStateService {
       this.state.next(poppedState);
     }
     this.currentRound.next(0);
+    this.regionsCompleted.next(0);
+    this.completedRegionIds = [];
   }
 
   private saveState(): void {
@@ -107,7 +140,9 @@ export class GameStateService {
       const data = {
         stateStack: this.stateStack,
         currentState: this.state.value,
-        currentRound: this.currentRound.value
+        currentRound: this.currentRound.value,
+        regionsCompleted: this.regionsCompleted.value,
+        completedRegionIds: this.completedRegionIds
       };
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
     } catch (e) {
@@ -124,6 +159,8 @@ export class GameStateService {
         this.stateStack = data.stateStack;
         this.state.next(data.currentState || 'game-start');
         this.currentRound.next(data.currentRound || 0);
+        this.regionsCompleted.next(data.regionsCompleted || 0);
+        this.completedRegionIds = data.completedRegionIds || [];
         return true;
       }
     } catch (e) {
