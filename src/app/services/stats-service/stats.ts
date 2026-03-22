@@ -12,11 +12,15 @@ export interface HallOfFameEntry {
   team: { name: string; pokemonId: number; shiny: boolean }[];
   generation: string;
   date: string;
+  grandChampion?: boolean;
 }
 
 export interface GameStats {
   leaders: LeaderStats;
   hallOfFame: HallOfFameEntry[];
+  legendariesCaught: number;
+  endlessWins: number;
+  regionsCompleted: number;
 }
 
 @Injectable({
@@ -25,7 +29,7 @@ export interface GameStats {
 export class StatsService {
 
   private readonly STORAGE_KEY = 'pokemon-roulette-stats';
-  private stats: GameStats = { leaders: {}, hallOfFame: [] };
+  private stats: GameStats = { leaders: {}, hallOfFame: [], legendariesCaught: 0, endlessWins: 0, regionsCompleted: 0 };
 
   constructor() {
     this.loadStats();
@@ -43,7 +47,7 @@ export class StatsService {
     this.saveStats();
   }
 
-  recordHallOfFame(team: { name: string; pokemonId: number; shiny: boolean }[], generation: string): void {
+  recordHallOfFame(team: { name: string; pokemonId: number; shiny: boolean }[], generation: string, grandChampion = false): void {
     // prevent duplicate entries on F5 during game-finish
     const last = this.stats.hallOfFame[this.stats.hallOfFame.length - 1];
     if (last && last.generation === generation &&
@@ -51,11 +55,28 @@ export class StatsService {
       return;
     }
 
-    this.stats.hallOfFame.push({
+    const entry: HallOfFameEntry = {
       team,
       generation,
       date: new Date().toLocaleDateString()
-    });
+    };
+    if (grandChampion) entry.grandChampion = true;
+    this.stats.hallOfFame.push(entry);
+    this.saveStats();
+  }
+
+  recordLegendaryCaught(): void {
+    this.stats.legendariesCaught++;
+    this.saveStats();
+  }
+
+  recordEndlessWin(): void {
+    this.stats.endlessWins++;
+    this.saveStats();
+  }
+
+  recordRegionCompleted(): void {
+    this.stats.regionsCompleted++;
     this.saveStats();
   }
 
@@ -88,6 +109,9 @@ export class StatsService {
       if (parsed.leaders) {
         this.stats = parsed;
       }
+      this.stats.legendariesCaught ??= 0;
+      this.stats.endlessWins ??= 0;
+      this.stats.regionsCompleted ??= 0;
 
       // dedup hall of fame entries
       if (this.stats.hallOfFame?.length > 1) {

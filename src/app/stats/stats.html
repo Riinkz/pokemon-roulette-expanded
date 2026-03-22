@@ -19,6 +19,10 @@
                         <a class="nav-link" [class.active]="activeTab === 'hallOfFame'"
                            (click)="activeTab = 'hallOfFame'" style="cursor: pointer">Hall of Fame</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeTab === 'summary'"
+                           (click)="activeTab = 'summary'" style="cursor: pointer">Summary</a>
+                    </li>
                 </ul>
             </div>
 
@@ -66,9 +70,13 @@
                     <p>No completed runs yet. Beat the Champion!</p>
                 } @else {
                     @for (run of hallOfFame; track $index) {
-                        <div class="card mb-3">
+                        <div class="card mb-3" [class.border-warning]="run.grandChampion" [class.border-2]="run.grandChampion">
                             <div class="card-body">
-                                <h5 class="card-title">{{ run.generation }} - {{ run.date }}</h5>
+                                <h5 class="card-title">
+                                    @if (run.grandChampion) { 🏆 }
+                                    {{ run.generation }} - {{ run.date }}
+                                    @if (run.grandChampion) { 🏆 }
+                                </h5>
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
                                     @for (pokemon of run.team; track pokemon.pokemonId) {
                                         <div class="text-center">
@@ -83,6 +91,35 @@
                         </div>
                     }
                 }
+            }
+
+            @if (activeTab === 'summary') {
+                <div class="row text-center mt-3">
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>{{ regionsCompleted }}</h5>
+                                <small>Regions Completed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>{{ legendariesCaught }}</h5>
+                                <small>Legendaries Caught</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5>{{ endlessWins }}</h5>
+                                <small>Endless Wins</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
 
         </div>

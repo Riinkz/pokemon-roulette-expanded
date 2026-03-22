@@ -12,9 +12,12 @@ import { StatsService, HallOfFameEntry } from '../services/stats-service/stats';
 })
 export class Stats implements OnInit {
 
-  activeTab: 'battles' | 'hallOfFame' = 'battles';
+  activeTab: 'battles' | 'hallOfFame' | 'summary' = 'battles';
   leadersList: { name: string; wins: number; losses: number; winrate: number; type: string }[] = [];
   hallOfFame: HallOfFameEntry[] = [];
+  legendariesCaught = 0;
+  endlessWins = 0;
+  regionsCompleted = 0;
 
   constructor(private statsService: StatsService) {}
 
@@ -30,5 +33,8 @@ export class Stats implements OnInit {
     })).sort((a, b) => (b.wins + b.losses) - (a.wins + a.losses));
 
     this.hallOfFame = [...stats.hallOfFame].reverse();
+    this.legendariesCaught = stats.legendariesCaught || 0;
+    this.endlessWins = stats.endlessWins || 0;
+    this.regionsCompleted = stats.regionsCompleted || 0;
   }
 }
