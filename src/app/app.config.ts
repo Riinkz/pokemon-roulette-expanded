@@ -45,7 +45,7 @@ export const appConfig: ApplicationConfig = {
         useFactory: httpLoaderFactory,
         deps: []
       },
-      defaultLanguage: 'en'
+      fallbackLang: 'en'
     })]),
     {
       provide: TRANSLATE_HTTP_LOADER_CONFIG,

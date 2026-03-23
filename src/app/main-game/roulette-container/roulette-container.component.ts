@@ -223,15 +223,15 @@ export class RouletteContainerComponent implements OnInit, OnDestroy {
         this.runningShoesRespins--;
         this.runningShoesActive = true;
         this.gameStateService.setNextState('adventure-continues');
-      } else {
+      } else if (!this.runningShoesActive) {
         const shoesCount = this.trainerService.trainerItems.filter(i => i.name === 'running-shoes').length;
         if (shoesCount > 0) {
           this.runningShoesRespins = shoesCount - 1;
           this.runningShoesActive = true;
           this.gameStateService.setNextState('adventure-continues');
-        } else {
-          this.runningShoesActive = false;
         }
+      } else {
+        this.runningShoesActive = false;
       }
     }
   }

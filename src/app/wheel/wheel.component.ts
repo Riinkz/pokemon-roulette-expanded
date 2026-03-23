@@ -83,10 +83,13 @@ export class WheelComponent implements AfterViewInit, OnChanges {
   handleResize(): void {
     this.updateWheelDimensions();
 
-    if (this.wheelCtx && this.pointerCtx) {
-      this.drawWheel(this.currentRotation);
-      this.drawPointer();
-    }
+    // defer redraw so Angular updates the canvas dimensions first
+    setTimeout(() => {
+      if (this.wheelCtx && this.pointerCtx) {
+        this.drawWheel(this.currentRotation);
+        this.drawPointer();
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -181,7 +184,7 @@ export class WheelComponent implements AfterViewInit, OnChanges {
   }
 
   spinWheel(): void {
-    if (this.spinning) {
+    if (this.spinning || this.items.length === 0) {
       return;
     }
 
@@ -231,8 +234,8 @@ export class WheelComponent implements AfterViewInit, OnChanges {
       requestAnimationFrame(this.animate.bind(this));
     } else {
       this.spinning = false;
-      this.selectedItemEvent.emit(this.winningNumber);
       this.gameStateService.setWheelSpinning(false);
+      setTimeout(() => this.selectedItemEvent.emit(this.winningNumber));
     }
 
     const segment = this.getCurrentSegment();
@@ -280,8 +283,11 @@ export class WheelComponent implements AfterViewInit, OnChanges {
 
   getRandomWeightedIndex(): number {
     if (this.settingsService.currentSettings.alwaysWin) {
-      const greenIndex = this.items.findIndex(i => i.fillStyle === 'green');
-      if (greenIndex >= 0) return greenIndex;
+      const colors = new Set(this.items.map(i => i.fillStyle));
+      if (colors.size === 2 && colors.has('green') && colors.has('crimson')) {
+        const greenIndex = this.items.findIndex(i => i.fillStyle === 'green');
+        if (greenIndex >= 0) return greenIndex;
+      }
     }
 
     const totalWeight = this.getTotalWeights();
