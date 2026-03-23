@@ -28,6 +28,7 @@
                   (click)="selectMode ? toggleSelect(pokemon) : null"
                   cdkDrag>
               <img class="img-fluid" [src]="getSprite(pokemon)">
+              @if (pokemon.shiny) { <span class="shiny-indicator">✨</span> }
               @if (!selectMode && trainerTeam.length + storedPokemon.length > 1) {
                 <button class="release-btn" title="Release" (click)="releasePokemon(pokemon)">✕</button>
               }
@@ -59,6 +60,7 @@
               (click)="selectMode ? toggleSelect(pokemon) : null"
               cdkDrag>
           <img [src]="getSprite(pokemon)" class="img-fluid">
+          @if (pokemon.shiny) { <span class="shiny-indicator">✨</span> }
           @if (!selectMode && trainerTeam.length + storedPokemon.length > 1) {
             <button class="release-btn" title="Release" (click)="releasePokemon(pokemon)">✕</button>
           }

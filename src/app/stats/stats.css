@@ -1,0 +1,152 @@
+.stat-value {
+	font-size: 2rem;
+	font-weight: bold;
+	font-family: 'Pokemon GB', monospace;
+}
+
+.stat-label {
+	font-size: 0.8rem;
+	color: #999;
+}
+
+.stat-card {
+	animation: stat-show 0.3s ease;
+}
+
+@keyframes stat-show {
+	from { opacity: 0; transform: scale(0.9); }
+	to { opacity: 1; transform: scale(1); }
+}
+
+.trainer-card {
+	border: 2px solid #ffc107;
+	background: linear-gradient(135deg, rgba(255, 193, 7, 0.08), transparent);
+}
+
+.trainer-rank-emoji {
+	font-size: 2.5rem;
+}
+
+.trainer-rank-title {
+	font-family: 'Pokemon GB', monospace;
+	font-size: 1.1rem;
+}
+
+.win-bar {
+	height: 6px;
+	min-width: 60px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.highlight-card {
+	border-left: 3px solid;
+}
+
+.highlight-card.tough { border-left-color: #dc3545; }
+.highlight-card.easy { border-left-color: #198754; }
+.highlight-card.nemesis { border-left-color: #6f42c1; }
+
+.highlight-label {
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.achievement-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 16px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.achievement-item:last-child {
+	border-bottom: none;
+}
+
+.achievement-locked {
+	opacity: 0.35;
+}
+
+.achievement-icon {
+	font-size: 1.5rem;
+	width: 40px;
+	text-align: center;
+}
+
+.achievement-check {
+	margin-left: auto;
+	font-size: 1.2rem;
+}
+
+.sort-header {
+	cursor: pointer;
+	user-select: none;
+}
+
+.sort-header:hover {
+	color: #ffc107;
+}
+
+.sort-arrow {
+	font-size: 0.7rem;
+	margin-left: 2px;
+}
+
+.top-pokemon-entry {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.top-pokemon-rank {
+	font-family: 'Pokemon GB', monospace;
+	font-size: 0.9rem;
+	width: 24px;
+	text-align: right;
+	color: #999;
+}
+
+.top-pokemon-name {
+	flex: 1;
+}
+
+.top-pokemon-count {
+	font-family: 'Pokemon GB', monospace;
+	color: #ffc107;
+}
+
+.filter-btn.active {
+	font-weight: bold;
+}
+
+.dex-sprite {
+	transition: transform 0.15s;
+}
+
+.dex-sprite:hover {
+	transform: scale(1.5);
+	z-index: 1;
+}
+
+@media (max-width: 767px) {
+	.stat-value {
+		font-size: 1.4rem;
+	}
+
+	.trainer-rank-emoji {
+		font-size: 2rem;
+	}
+
+	.nav-tabs .nav-link {
+		font-size: 0.75rem;
+		padding: 0.4rem 0.5rem;
+	}
+
+	.highlight-card {
+		margin-bottom: 8px;
+	}
+}

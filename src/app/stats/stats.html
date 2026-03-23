@@ -6,43 +6,180 @@
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-9">
+    <div class="col-12 col-sm-10">
         <div class="container text-center">
 
             <div class="mt-2 mb-3">
-                <ul class="nav nav-tabs justify-content-center">
+                <ul class="nav nav-tabs justify-content-center flex-wrap">
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeTab === 'overview'"
+                           (click)="activeTab = 'overview'" style="cursor: pointer">Overview</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" [class.active]="activeTab === 'battles'"
-                           (click)="activeTab = 'battles'" style="cursor: pointer">Battle Stats</a>
+                           (click)="activeTab = 'battles'" style="cursor: pointer">Battles</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" [class.active]="activeTab === 'hallOfFame'"
                            (click)="activeTab = 'hallOfFame'" style="cursor: pointer">Hall of Fame</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" [class.active]="activeTab === 'summary'"
-                           (click)="activeTab = 'summary'" style="cursor: pointer">Summary</a>
+                        <a class="nav-link" [class.active]="activeTab === 'pokemon'"
+                           (click)="activeTab = 'pokemon'" style="cursor: pointer">Pokemon</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [class.active]="activeTab === 'records'"
+                           (click)="activeTab = 'records'" style="cursor: pointer">Records</a>
                     </li>
                 </ul>
             </div>
 
+            <!-- OVERVIEW TAB -->
+            @if (activeTab === 'overview') {
+                <div class="card trainer-card mb-4 stat-card">
+                    <div class="card-body py-3">
+                        <div class="d-flex align-items-center justify-content-center gap-3">
+                            <span class="trainer-rank-emoji">{{ trainerRank.emoji }}</span>
+                            <div>
+                                <div class="trainer-rank-title">{{ trainerRank.title }}</div>
+                                <div class="small text-muted">{{ totalWins }} victories</div>
+                            </div>
+                            <span class="badge fs-6" [ngClass]="winRateColor(overallWinRate)">
+                                {{ overallWinRate }}% win rate
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ totalBattles }}</div>
+                                <div class="stat-label">Total Battles</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ overallWinRate }}%</div>
+                                <div class="stat-label">Win Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ totalWins }}</div>
+                                <div class="stat-label">Total Wins</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ hallOfFame.length }}</div>
+                                <div class="stat-label">Hall of Fame</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ legendariesCaught }}</div>
+                                <div class="stat-label">Legendaries Caught</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ endlessWins }}</div>
+                                <div class="stat-label">Endless Wins</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ grandChampionCount }}</div>
+                                <div class="stat-label">Grand Champion</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="stat-value">{{ uniquePokemonCount }}</div>
+                                <div class="stat-label">Unique Pokemon</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- BATTLES TAB -->
             @if (activeTab === 'battles') {
                 @if (leadersList.length === 0) {
-                    <p>No battles recorded yet.</p>
+                    <p class="mt-3">No battles recorded yet.</p>
                 } @else {
+                    <div class="btn-group mb-3" role="group">
+                        <button class="btn btn-sm filter-btn"
+                                [class.btn-primary]="battleFilter === 'all'"
+                                [class.btn-outline-primary]="battleFilter !== 'all'"
+                                (click)="filterBattles('all')">All</button>
+                        <button class="btn btn-sm filter-btn"
+                                [class.btn-primary]="battleFilter === 'gym'"
+                                [class.btn-outline-primary]="battleFilter !== 'gym'"
+                                (click)="filterBattles('gym')">Gym</button>
+                        <button class="btn btn-sm filter-btn"
+                                [class.btn-warning]="battleFilter === 'elite'"
+                                [class.btn-outline-warning]="battleFilter !== 'elite'"
+                                (click)="filterBattles('elite')">Elite Four</button>
+                        <button class="btn btn-sm filter-btn"
+                                [class.btn-danger]="battleFilter === 'champion'"
+                                [class.btn-outline-danger]="battleFilter !== 'champion'"
+                                (click)="filterBattles('champion')">Champion</button>
+                        <button class="btn btn-sm filter-btn"
+                                [class.btn-secondary]="battleFilter === 'rival'"
+                                [class.btn-outline-secondary]="battleFilter !== 'rival'"
+                                (click)="filterBattles('rival')">Rival</button>
+                    </div>
+
                     <div class="table-responsive">
-                        <table class="table table-sm table-striped">
+                        <table class="table table-sm table-striped text-start">
                             <thead>
                                 <tr>
-                                    <th>Leader</th>
+                                    <th class="sort-header" (click)="sortBy('name')">
+                                        Leader
+                                        @if (sortColumn === 'name') {
+                                            <span class="sort-arrow">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                                        }
+                                    </th>
                                     <th>Type</th>
-                                    <th>Wins</th>
-                                    <th>Losses</th>
-                                    <th>Winrate</th>
+                                    <th class="sort-header" (click)="sortBy('wins')">
+                                        W
+                                        @if (sortColumn === 'wins') {
+                                            <span class="sort-arrow">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                                        }
+                                    </th>
+                                    <th class="sort-header" (click)="sortBy('losses')">
+                                        L
+                                        @if (sortColumn === 'losses') {
+                                            <span class="sort-arrow">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                                        }
+                                    </th>
+                                    <th class="sort-header" (click)="sortBy('winrate')">
+                                        Win%
+                                        @if (sortColumn === 'winrate') {
+                                            <span class="sort-arrow">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+                                        }
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @for (entry of leadersList; track entry.name) {
+                                @for (entry of filteredLeaders; track entry.name) {
                                     <tr>
                                         <td>{{ entry.name | translate }}</td>
                                         <td>
@@ -56,18 +193,71 @@
                                         </td>
                                         <td>{{ entry.wins }}</td>
                                         <td>{{ entry.losses }}</td>
-                                        <td>{{ entry.winrate }}%</td>
+                                        <td>
+                                            {{ entry.winrate }}%
+                                            <div class="progress win-bar">
+                                                <div class="progress-bar" [ngClass]="winRateColor(entry.winrate)"
+                                                     [style.width.%]="entry.winrate"></div>
+                                            </div>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
+                            <tfoot>
+                                <tr class="fw-bold">
+                                    <td colspan="2">Total</td>
+                                    <td>{{ totalWins }}</td>
+                                    <td>{{ totalLosses }}</td>
+                                    <td>{{ overallWinRate }}%</td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
+
+                    @if (toughestOpponent || easiestOpponent || nemesis) {
+                        <div class="row mt-3 text-start">
+                            @if (toughestOpponent) {
+                                <div class="col-md-4 mb-2">
+                                    <div class="card highlight-card tough">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="highlight-label text-danger">Toughest</div>
+                                            <div class="fw-bold">{{ toughestOpponent.name | translate }}</div>
+                                            <div class="small text-muted">{{ toughestOpponent.winrate }}% win rate</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (easiestOpponent) {
+                                <div class="col-md-4 mb-2">
+                                    <div class="card highlight-card easy">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="highlight-label text-success">Easiest</div>
+                                            <div class="fw-bold">{{ easiestOpponent.name | translate }}</div>
+                                            <div class="small text-muted">{{ easiestOpponent.winrate }}% win rate</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (nemesis) {
+                                <div class="col-md-4 mb-2">
+                                    <div class="card highlight-card nemesis">
+                                        <div class="card-body py-2 px-3">
+                                            <div class="highlight-label" style="color: #6f42c1">Nemesis</div>
+                                            <div class="fw-bold">{{ nemesis.name | translate }}</div>
+                                            <div class="small text-muted">{{ nemesis.losses }} losses</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
                 }
             }
 
+            <!-- HALL OF FAME TAB -->
             @if (activeTab === 'hallOfFame') {
                 @if (hallOfFame.length === 0) {
-                    <p>No completed runs yet. Beat the Champion!</p>
+                    <p class="mt-3">No completed runs yet. Beat the Champion!</p>
                 } @else {
                     @for (run of hallOfFame; track $index) {
                         <div class="card mb-3" [class.border-warning]="run.grandChampion" [class.border-2]="run.grandChampion">
@@ -76,9 +266,12 @@
                                     @if (run.grandChampion) { 🏆 }
                                     {{ run.generation }} - {{ run.date }}
                                     @if (run.grandChampion) { 🏆 }
+                                    @if (getShinyCount(run) > 0) {
+                                        <span class="badge bg-info ms-2">✨ {{ getShinyCount(run) }}</span>
+                                    }
                                 </h5>
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                    @for (pokemon of run.team; track pokemon.pokemonId) {
+                                    @for (pokemon of run.team; track $index) {
                                         <div class="text-center">
                                             <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + (pokemon.shiny ? 'shiny/' : '') + pokemon.pokemonId + '.png'"
                                                  width="48" height="48"
@@ -93,33 +286,109 @@
                 }
             }
 
-            @if (activeTab === 'summary') {
-                <div class="row text-center mt-3">
-                    <div class="col-6 col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>{{ regionsCompleted }}</h5>
-                                <small>Regions Completed</small>
+            <!-- POKEMON TAB -->
+            @if (activeTab === 'pokemon') {
+                @if (topPokemon.length === 0) {
+                    <p class="mt-3">No Pokemon data yet. Complete a run!</p>
+                } @else {
+                    <div class="row text-center mb-4">
+                        <div class="col-4">
+                            <div class="card stat-card">
+                                <div class="card-body py-2">
+                                    <div class="stat-value">{{ uniquePokemonCount }}</div>
+                                    <div class="stat-label">Unique Pokemon</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card stat-card">
+                                <div class="card-body py-2">
+                                    <div class="stat-value">{{ totalShiniesInHof }}</div>
+                                    <div class="stat-label">Shinies in HoF</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card stat-card">
+                                <div class="card-body py-2">
+                                    <div class="stat-value">{{ shinyPercentage }}%</div>
+                                    <div class="stat-label">Shiny Rate</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 col-md-4 mb-3">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5>{{ legendariesCaught }}</h5>
-                                <small>Legendaries Caught</small>
-                            </div>
+
+                    <p class="text-muted small mb-3">Based on Hall of Fame teams only</p>
+                    <h5 class="mb-3">Most Used Pokemon</h5>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            @for (pkmn of topPokemon; track pkmn.pokemonId) {
+                                <div class="top-pokemon-entry">
+                                    <span class="top-pokemon-rank">{{ $index + 1 }}.</span>
+                                    <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pkmn.pokemonId + '.png'"
+                                         width="40" height="40">
+                                    <span class="top-pokemon-name text-start">
+                                        {{ pkmn.name | translate }}
+                                        @if (pkmn.shinyCount > 0) { ✨ }
+                                    </span>
+                                    <span class="top-pokemon-count">x{{ pkmn.count }}</span>
+                                </div>
+                            }
                         </div>
                     </div>
-                    <div class="col-6 col-md-4 mb-3">
+
+                    <h5 class="mb-3 mt-4">Pokedex <span class="badge bg-secondary">{{ pokedex.length }}</span></h5>
+                    <div class="card">
+                        <div class="card-body d-flex flex-wrap justify-content-center gap-1 py-2">
+                            @for (p of pokedex; track p.pokemonId) {
+                                <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + p.pokemonId + '.png'"
+                                     width="40" height="40"
+                                     [title]="'#' + p.pokemonId + ' ' + (p.name | translate)"
+                                     class="dex-sprite">
+                            }
+                        </div>
+                    </div>
+
+                    @if (shinyDex.length > 0) {
+                        <h5 class="mb-3 mt-4">Shiny Dex ✨ <span class="badge bg-info">{{ shinyDex.length }}</span></h5>
                         <div class="card">
-                            <div class="card-body">
-                                <h5>{{ endlessWins }}</h5>
-                                <small>Endless Wins</small>
+                            <div class="card-body d-flex flex-wrap justify-content-center gap-1 py-2">
+                                @for (p of shinyDex; track p.pokemonId) {
+                                    <img [src]="'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/' + p.pokemonId + '.png'"
+                                         width="40" height="40"
+                                         [title]="'#' + p.pokemonId + ' ' + (p.name | translate)"
+                                         class="dex-sprite">
+                                }
                             </div>
                         </div>
+                    }
+                }
+            }
+
+            <!-- RECORDS TAB -->
+            @if (activeTab === 'records') {
+                <h5 class="mb-3 mt-2">Achievements</h5>
+                <div class="card">
+                    <div class="card-body p-0">
+                        @for (a of achievements; track a.label) {
+                            <div class="achievement-item" [class.achievement-locked]="!a.done">
+                                <span class="achievement-icon">{{ a.icon }}</span>
+                                <span class="text-start">{{ a.label }}</span>
+                                <span class="achievement-check">
+                                    @if (a.done) {
+                                        <span class="text-success">✔</span>
+                                    } @else {
+                                        <span class="text-muted">🔒</span>
+                                    }
+                                </span>
+                            </div>
+                        }
                     </div>
                 </div>
+
+                <p class="text-muted mt-3">
+                    {{ achievementsUnlocked }} / {{ achievements.length }} unlocked
+                </p>
             }
 
         </div>
